@@ -2,6 +2,7 @@
 
 import environ
 from pathlib import Path
+from urllib.parse import urlsplit
 
 
 BASE_DIR = Path(__file__).resolve().parents[2]
@@ -10,7 +11,22 @@ environ.Env.read_env(BASE_DIR / ".env")
 
 SECRET_KEY = env("SECRET_KEY", default="")
 DEBUG = False
-ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=[])
+
+
+def get_allowed_hosts():
+    """Combine explicit hosts with exact hostnames supplied by Vercel."""
+    hosts = env.list("ALLOWED_HOSTS", default=[])
+    for variable in ("VERCEL_URL", "VERCEL_PROJECT_PRODUCTION_URL"):
+        value = env(variable, default="").strip()
+        if value:
+            candidate = value if "://" in value else f"//{value}"
+            hostname = urlsplit(candidate).hostname
+            if hostname:
+                hosts.append(hostname)
+    return list(dict.fromkeys(hosts))
+
+
+ALLOWED_HOSTS = get_allowed_hosts()
 
 INSTALLED_APPS = [
     "django.contrib.admin",
