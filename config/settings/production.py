@@ -8,6 +8,12 @@ from .base import env
 
 DEBUG = False
 PAYMENT_DEMO_ENABLED = False
+STORAGES = {
+    **STORAGES,
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
 
 if len(SECRET_KEY) < 50 or SECRET_KEY == "django-insecure-local-development-only":
     raise ImproperlyConfigured(
