@@ -7,7 +7,11 @@ from urllib.parse import urlsplit
 
 BASE_DIR = Path(__file__).resolve().parents[2]
 env = environ.Env()
-environ.Env.read_env(BASE_DIR / ".env")
+
+# Safe .env reader (won't crash if .env doesn't exist on Vercel)
+env_file = BASE_DIR / ".env"
+if env_file.exists():
+    environ.Env.read_env(env_file)
 
 SECRET_KEY = env("SECRET_KEY", default="")
 DEBUG = False
@@ -83,12 +87,15 @@ TEMPLATES = [
 WSGI_APPLICATION = "config.wsgi.application"
 ASGI_APPLICATION = "config.asgi.application"
 
+# Robust database configuration with Neon/Cloud SSL support
 database_url = env("DATABASE_URL", default="").strip()
 if database_url:
     DATABASES = {"default": env.db("DATABASE_URL")}
     DATABASES["default"]["CONN_MAX_AGE"] = env.int(
         "DB_CONN_MAX_AGE", default=60
     )
+    if "neon.tech" in database_url or "render.com" in database_url:
+        DATABASES["default"]["OPTIONS"] = {"sslmode": "require"}
 else:
     DATABASES = {
         "default": {

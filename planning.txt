@@ -504,3 +504,15 @@ earlier entries.
   site CSS returned HTTP 200 with `text/css` through the production
   WhiteNoise stack. All 227 project tests passed and `manage.py check`
   reported no issues.
+
+[2026-10-26] Configure environment-based cloud database connections
+- Kept the existing `django-environ` `DATABASE_URL` parser and SQLite fallback,
+  increased the configurable persistent connection age default to 600 seconds,
+  and enabled Django connection health checks for SQLite and URL-configured
+  databases. No redundant database URL parser dependency was added.
+- Documented environment setup, connection pooling considerations, and the
+  need for managed PostgreSQL for persistent Vercel production data.
+- Files: `config/settings/base.py`, `.env.example`, `README.md`, `planning.txt`.
+- Verified PostgreSQL `DATABASE_URL` parsing and SQLite fallback, each with
+  600-second connection age and connection health checks. `manage.py check`
+  passed and migration drift check reported no changes.
