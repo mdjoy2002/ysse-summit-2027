@@ -460,3 +460,9 @@ earlier entries.
 - Applied `registrations.0005_guest_registration_access` to the development
   database. All 227 project tests passed; `manage.py check` passed;
   `makemigrations --check --dry-run` reported no changes.
+
+[2026-10-26] Exposing WSGI app alias for Vercel
+- Added `app = application` in `config/wsgi.py` for deployment platforms that
+  expect the WSGI callable under the `app` name.
+- Files: `config/wsgi.py`, `planning.txt`.
+- Verified Django system checks pass.
