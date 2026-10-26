@@ -490,3 +490,17 @@ earlier entries.
 - WhiteNoise 6.12.0 is installed; all 227 project tests passed;
   `manage.py check` passed; migration drift check reported no changes; and
   production `collectstatic --dry-run --noinput` completed successfully.
+
+[2026-10-26] Fix Vercel static asset build configuration
+- Removed the explicit legacy Python builder and `/static/` rewrite so Vercel
+  can use Django framework detection, its automatic `collectstatic`, and CDN
+  static-file routing. Added `.python-version` to pin supported Python 3.12;
+  removed the incompatible Python 3.9 and restrictive 15 MB Lambda config.
+- Documented the required Vercel production settings and static collection
+  behavior.
+- Files: `vercel.json`, `.python-version`, `README.md`, `planning.txt`.
+- Pinned Python 3.12 and parsed the Vercel config successfully. Production
+  `collectstatic --noinput` completed (427 files post-processed); the hashed
+  site CSS returned HTTP 200 with `text/css` through the production
+  WhiteNoise stack. All 227 project tests passed and `manage.py check`
+  reported no issues.
