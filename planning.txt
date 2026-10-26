@@ -516,3 +516,11 @@ earlier entries.
 - Verified PostgreSQL `DATABASE_URL` parsing and SQLite fallback, each with
   600-second connection age and connection health checks. `manage.py check`
   passed and migration drift check reported no changes.
+
+[2026-10-26] Set local Neon database connection
+- Created the ignored local `.env` file with the requested Neon `DATABASE_URL`;
+  the connection string is intentionally not recorded in this log.
+- Verified `.env` is excluded by `.gitignore`. No application source files
+  were changed. A local URL-format check passed without displaying the
+  credential. `python manage.py check` could not run because `django-environ`
+  is not installed in the active Python environment.
