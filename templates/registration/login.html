@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Sign in | YSSE{% endblock %}
+{% block styles %}<link rel="stylesheet" href="{% static 'competitions/css/competitions.css' %}">{% endblock %}
+
+{% block content %}
+  <section class="competition-form-section">
+    <div class="competition-login-card">
+      <p class="competition-kicker">Participant access</p>
+      <h1>Sign in to <em>continue.</em></h1>
+      <p>Your account is required to save, submit, and review your private competition entries.</p>
+      <form method="post" class="competition-form">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        {% for field in form %}
+          <div class="competition-form-field">
+            {{ field.label_tag }}
+            {{ field }}
+            {% for error in field.errors %}<span class="competition-field-error">{{ error }}</span>{% endfor %}
+          </div>
+        {% endfor %}
+        {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
+        <button class="competition-button competition-button-primary" type="submit">Sign in <span aria-hidden="true">↗</span></button>
+      </form>
+    </div>
+  </section>
+{% endblock %}

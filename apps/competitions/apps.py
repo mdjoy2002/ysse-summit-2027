@@ -1,0 +1,9 @@
+from django.apps import AppConfig
+
+
+class CompetitionsConfig(AppConfig):
+    """Configuration for competition catalog and submissions."""
+
+    default_auto_field = "django.db.models.BigAutoField"
+    name = "apps.competitions"
+    label = "competitions"

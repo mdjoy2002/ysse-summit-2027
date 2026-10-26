@@ -1,0 +1,73 @@
+{% load static %}
+<a class="skip-link" href="#main-content">Skip to content</a>
+<header class="site-header">
+  <nav class="nav-shell" aria-label="Main navigation">
+    <a class="brand" href="{% url 'home:index' %}" aria-label="YSSE Summit 2027 home">
+      <img class="brand-logo" src="{% static 'images/ysse-logo.png' %}" alt="YSSE">
+      <span class="brand-copy"><small>SUMMIT 2027</small></span>
+    </a>
+    <div class="desktop-nav">
+      <details class="nav-dropdown">
+        <summary>Summit</summary>
+        <div class="nav-dropdown-panel">
+          <a href="{% url 'about:index' %}">About YSSE</a>
+          <a href="{% url 'summit:index' %}">Summit details</a>
+          <a href="{% url 'speakers:list' %}">Speakers</a>
+          <a href="{% url 'schedule:index' %}">Event schedule</a>
+          <a href="{% url 'home:index' %}#news">Latest updates</a>
+        </div>
+      </details>
+      <details class="nav-dropdown">
+        <summary>Get involved</summary>
+        <div class="nav-dropdown-panel">
+          <a href="{% url 'competitions:list' %}">Competitions</a>
+          <a href="{% url 'partners:index' %}">Partners and sponsors</a>
+        </div>
+      </details>
+      <a href="{% url 'contact:contact' %}">Contact</a>
+      {% if user.is_authenticated %}
+        <details class="nav-dropdown">
+          <summary>My Summit</summary>
+          <div class="nav-dropdown-panel">
+            <a href="{% url 'competitions:my-submissions' %}">My entries</a>
+            <a href="{% url 'registrations:history' %}">My registrations</a>
+          </div>
+        </details>
+      {% endif %}
+      <a class="nav-cta" href="{% url 'registrations:passes' %}">Register <span aria-hidden="true">↗</span></a>
+    </div>
+    <details class="mobile-nav">
+      <summary aria-label="Open navigation menu">Menu <span aria-hidden="true">☰</span></summary>
+      <div class="mobile-nav-panel" aria-label="Site navigation">
+        <details class="nav-dropdown">
+          <summary>Summit</summary>
+          <div class="nav-dropdown-panel">
+            <a href="{% url 'about:index' %}">About YSSE</a>
+            <a href="{% url 'summit:index' %}">Summit details</a>
+            <a href="{% url 'speakers:list' %}">Speakers</a>
+            <a href="{% url 'schedule:index' %}">Event schedule</a>
+            <a href="{% url 'home:index' %}#news">Latest updates</a>
+          </div>
+        </details>
+        <details class="nav-dropdown">
+          <summary>Get involved</summary>
+          <div class="nav-dropdown-panel">
+            <a href="{% url 'competitions:list' %}">Competitions</a>
+            <a href="{% url 'partners:index' %}">Partners and sponsors</a>
+          </div>
+        </details>
+        <a href="{% url 'contact:contact' %}">Contact</a>
+        {% if user.is_authenticated %}
+          <details class="nav-dropdown">
+            <summary>My Summit</summary>
+            <div class="nav-dropdown-panel">
+              <a href="{% url 'competitions:my-submissions' %}">My entries</a>
+              <a href="{% url 'registrations:history' %}">My registrations</a>
+            </div>
+          </details>
+        {% endif %}
+        <a class="nav-cta" href="{% url 'registrations:passes' %}">Register <span aria-hidden="true">↗</span></a>
+      </div>
+    </details>
+  </nav>
+</header>

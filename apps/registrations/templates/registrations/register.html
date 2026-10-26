@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Complete Registration | YSSE Summit 2027{% endblock %}
+{% block styles %}<link rel="stylesheet" href="{% static 'registrations/css/registrations.css' %}">{% endblock %}
+
+{% block content %}
+  <section class="registration-section">
+    <div class="registration-shell registration-form-shell">
+      <p class="registration-kicker">Participant registration</p>
+      <h1>Reserve your summit pass.</h1>
+      <p>No account or sign-in is required. Enter an email address for registration updates; phone is optional. Keep this browser session open to review your registration and continue to payment.</p>
+      <form method="post" class="registration-form">
+        {% csrf_token %}
+        {% if form.non_field_errors %}<div class="form-errors" role="alert">{{ form.non_field_errors }}</div>{% endif %}
+        {% for field in form %}
+          <div class="registration-field{% if field.errors %} field-invalid{% endif %}">
+            {% if field.field.widget.input_type == "checkbox" %}
+              <label class="registration-consent">{{ field }} <span>{{ field.label }}</span></label>
+            {% else %}
+              <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+              {{ field }}
+            {% endif %}
+            {% for error in field.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+          </div>
+        {% endfor %}
+        <button class="registration-button" type="submit">Submit registration <span aria-hidden="true">↗</span></button>
+      </form>
+      <p class="registration-privacy">By submitting, you consent to the summit team using the details above for registration administration and event communication.</p>
+    </div>
+  </section>
+{% endblock %}

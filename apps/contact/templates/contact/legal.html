@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{% if document %}{{ document.title }}{% elif kind == "privacy" %}Privacy Policy{% else %}Terms and Conditions{% endif %} | YSSE Summit 2027{% endblock %}
+{% block styles %}<link rel="stylesheet" href="{% static 'contact/css/contact.css' %}">{% endblock %}
+
+{% block content %}
+  <section class="info-hero">
+    <div class="info-shell">
+      <p class="info-eyebrow">Summit information</p>
+      <h1>{% if document %}{{ document.title }}{% elif kind == "privacy" %}Privacy Policy{% else %}Terms and Conditions{% endif %}</h1>
+    </div>
+  </section>
+  <section class="info-section">
+    <article class="info-shell info-card legal-copy">
+      {% if document %}
+        <p class="legal-updated">Last updated {{ document.updated_at|date:"F j, Y" }}</p>
+        <div class="rich-copy">{{ document.content|linebreaks }}</div>
+      {% else %}
+        <p>This page is being prepared for publication and is not yet available. Please contact the Summit team if you need information in the meantime.</p>
+        <a class="info-button" href="{% url 'contact:contact' %}">Contact the team</a>
+      {% endif %}
+      <p class="legal-review-note">These terms and privacy information require organizer review before publication. No legal-compliance claim is made by this website.</p>
+    </article>
+  </section>
+{% endblock %}

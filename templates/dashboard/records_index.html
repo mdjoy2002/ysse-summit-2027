@@ -1,0 +1,45 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}All records | YSSE Summit 2027{% endblock %}
+{% block dashboard_title %}All managed records{% endblock %}
+{% block dashboard_content %}
+  <section class="dashboard-welcome">
+    <div>
+      <p class="dashboard-section-kicker">Content and operations</p>
+      <h2>Everything you are authorized to view</h2>
+      <p>Choose a section to search, filter, and browse its records. Each section is displayed in this management dashboard.</p>
+    </div>
+  </section>
+
+  {% for app in model_catalog %}
+    <section class="dashboard-panel dashboard-record-app">
+      <div class="dashboard-panel-heading">
+        <div>
+          <p class="dashboard-section-kicker">Managed section</p>
+          <h2>{{ app.label }}</h2>
+        </div>
+        <span class="dashboard-record-count">{{ app.models|length }} record types</span>
+      </div>
+      <div class="dashboard-record-grid">
+        {% for model in app.models %}
+          <a class="dashboard-record-card" href="{{ model.url }}">
+            <span class="dashboard-record-card-icon" aria-hidden="true">{{ model.name|first|upper }}</span>
+            <span class="dashboard-record-card-copy">
+              <strong>{{ model.name }}</strong>
+              {% if model.count != None %}<span>{{ model.count }} record{{ model.count|pluralize }}</span>{% else %}<span>Creation access</span>{% endif %}
+            </span>
+            <span class="dashboard-record-arrow" aria-hidden="true">↗</span>
+          </a>
+          {% if model.can_add %}
+            <a class="dashboard-record-add" href="{{ model.add_url }}">Add</a>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </section>
+  {% empty %}
+    <section class="dashboard-empty-state">
+      <h2>No records available</h2>
+      <p>Your account currently has no model permissions to view managed records. Ask an administrator to grant the appropriate read access.</p>
+    </section>
+  {% endfor %}
+{% endblock %}

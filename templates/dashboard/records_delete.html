@@ -1,0 +1,33 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}Delete {{ object_title }} | YSSE Summit 2027{% endblock %}
+{% block dashboard_title %}Delete record{% endblock %}
+{% block dashboard_content %}
+  <section class="dashboard-panel dashboard-delete-panel">
+    <p class="dashboard-section-kicker">Confirm action</p>
+    <h2>Delete “{{ object_title }}”?</h2>
+    {% if protected %}
+      <div class="dashboard-form-errors" role="alert">
+        This record cannot be deleted while protected related records exist.
+        <ul>{% for item in protected %}<li>{{ item }}</li>{% endfor %}</ul>
+      </div>
+    {% elif perms_needed %}
+      <div class="dashboard-form-errors" role="alert">
+        You do not have permission to delete all related records.
+      </div>
+    {% else %}
+      <p>This action cannot be undone. The following records will be deleted:</p>
+      <ul class="dashboard-delete-tree">
+        {% for item in deleted_objects %}<li>{{ item|safe }}</li>{% endfor %}
+      </ul>
+      <p class="dashboard-private-note">Related records affected: {{ model_count|length }} model type{{ model_count|length|pluralize }}.</p>
+      <form method="post" class="dashboard-editor-actions">
+        {% csrf_token %}
+        <input type="hidden" name="confirm" value="yes">
+        <button class="dashboard-danger-link" type="submit">Confirm delete</button>
+        <a class="dashboard-secondary-link" href="{{ cancel_url }}">Cancel</a>
+      </form>
+    {% endif %}
+    {% if protected or perms_needed %}<a class="dashboard-secondary-link" href="{{ cancel_url }}">Back to record</a>{% endif %}
+  </section>
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}Management Reports | YSSE Summit 2027{% endblock %}
+{% block dashboard_title %}Reports &amp; exports{% endblock %}
+{% block dashboard_content %}
+  <section class="dashboard-welcome">
+    <div>
+      <p class="dashboard-section-kicker">Operational reporting</p>
+      <h2>Aggregate summaries</h2>
+      <p>Reports contain status totals only. Participant names, emails, phone numbers, and submission contents are never exported.</p>
+    </div>
+  </section>
+
+  <section class="dashboard-panel">
+    <form class="dashboard-report-filter" method="get">
+      <div class="dashboard-filter-field"><label for="{{ report_filter.date_from.id_for_label }}">From date</label>{{ report_filter.date_from }}</div>
+      <div class="dashboard-filter-field"><label for="{{ report_filter.date_to.id_for_label }}">To date</label>{{ report_filter.date_to }}</div>
+      <button class="dashboard-primary-link" type="submit">Apply dates</button>
+      <button class="dashboard-secondary-link" type="submit" name="format" value="csv">Download aggregate CSV</button>
+      <a class="dashboard-reset-link" href="{% url 'dashboard:reports' %}">Clear dates</a>
+    </form>
+    {% if report_filter.errors %}<div class="dashboard-form-errors" role="alert">{{ report_filter.errors }}</div>{% endif %}
+    {% if report_rows %}
+      <div class="dashboard-table-wrap">
+        <table class="dashboard-table">
+          <thead><tr><th scope="col">Report</th><th scope="col">Status</th><th scope="col">Records</th><th scope="col">Total amount</th></tr></thead>
+          <tbody>
+            {% for row in report_rows %}
+              <tr><th scope="row">{{ row.section }}</th><td>{{ row.status }}</td><td>{{ row.count }}</td><td>{% if row.amount %}৳ {{ row.amount|floatformat:2 }}{% else %}—{% endif %}</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% elif invalid_filter %}
+      <p class="dashboard-empty-inline">Correct the date range to load this report.</p>
+    {% elif has_report_access %}
+      <p class="dashboard-empty-inline">No records are available for the selected date range.</p>
+    {% else %}
+      <p class="dashboard-empty-inline">No report rows are available. Ask an administrator for read access to registrations, payments, or competition submissions.</p>
+    {% endif %}
+  </section>
+{% endblock %}

@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ speaker.full_name }} | YSSE Summit 2027{% endblock %}
+{% block meta_description %}{{ speaker.full_name }}, {{ speaker.official_designation }} at {{ speaker.organization }} — speaker profile for the YSSE Social Entrepreneurship Summit 2027.{% endblock %}
+{% block styles %}<link rel="stylesheet" href="{% static 'speakers/css/speakers.css' %}">{% endblock %}
+
+{% block content %}
+  <section class="speaker-profile-section section" aria-labelledby="speaker-profile-name">
+    <div class="page-shell">
+      <a class="speaker-back-link" href="{% url 'speakers:list' %}">← All speakers &amp; guests</a>
+      <article class="speaker-profile">
+        <div class="speaker-profile-photo">
+          {% if speaker.profile_image %}
+            <img src="{{ speaker.profile_image.url }}" alt="Portrait of {{ speaker.full_name }}">
+          {% else %}
+            <span aria-hidden="true">{{ speaker.full_name|first }}</span>
+            <span class="visually-hidden">No profile image available</span>
+          {% endif %}
+        </div>
+        <div class="speaker-profile-content">
+          <span class="speaker-status{% if speaker.participation_status != 'confirmed' %} is-pending{% endif %}">
+            {% if speaker.participation_status == "confirmed" %}Participation confirmed{% else %}Participation not confirmed{% endif %}
+          </span>
+          <p class="section-kicker">Summit 2027 speaker</p>
+          <h1 id="speaker-profile-name">{{ speaker.full_name }}</h1>
+          <p class="speaker-profile-role">{{ speaker.official_designation }}</p>
+          <p class="speaker-profile-organization">{{ speaker.organization }}</p>
+
+          {% if speaker.categories.all %}
+            <ul class="speaker-category-list" aria-label="Speaker categories">
+              {% for category in speaker.categories.all %}
+                {% if category.is_published %}<li><a href="{% url 'speakers:list' %}?category={{ category.slug }}">{{ category.name }}</a></li>{% endif %}
+              {% endfor %}
+            </ul>
+          {% endif %}
+
+          <section class="speaker-profile-block" aria-labelledby="speaker-biography-title">
+            <h2 id="speaker-biography-title">Biography</h2>
+            <div>{{ speaker.biography|linebreaks }}</div>
+          </section>
+          {% if speaker.session_topic %}
+            <section class="speaker-profile-block" aria-labelledby="speaker-session-title">
+              <h2 id="speaker-session-title">Session topic</h2>
+              <p>{{ speaker.session_topic }}</p>
+            </section>
+          {% endif %}
+        </div>
+      </article>
+    </div>
+  </section>
+{% endblock %}

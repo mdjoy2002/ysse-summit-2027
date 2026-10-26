@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ release.title }} | YSSE Summit Press{% endblock %}
+{% block styles %}<link rel="stylesheet" href="{% static 'contact/css/contact.css' %}">{% endblock %}
+
+{% block content %}
+  <section class="info-hero">
+    <div class="info-shell">
+      <p class="info-eyebrow">Press release · {{ release.publication_date|date:"F j, Y" }}</p>
+      <h1>{{ release.title }}</h1>
+    </div>
+  </section>
+  <section class="info-section">
+    <article class="info-shell info-card press-detail">
+      {% if release.cover_image %}<img class="press-cover" src="{% url 'contact:press-cover' release.slug %}" alt="">{% endif %}
+      <div class="rich-copy">{{ release.content|linebreaks }}</div>
+      {% if release.attachment %}
+        <a class="info-button" href="{% url 'contact:press-attachment' release.slug %}">Download PDF attachment</a>
+      {% endif %}
+      <a class="info-text-link" href="{% url 'contact:press-list' %}">Back to press releases</a>
+    </article>
+  </section>
+{% endblock %}

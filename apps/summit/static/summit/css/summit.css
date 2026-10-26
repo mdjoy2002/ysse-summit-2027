@@ -1,0 +1,553 @@
+.summit-shell {
+  width: min(1120px, calc(100% - 3rem));
+  margin-inline: auto;
+}
+
+.summit-hero {
+  position: relative;
+  display: flex;
+  min-height: 560px;
+  align-items: center;
+  overflow: hidden;
+  isolation: isolate;
+  color: #fff;
+  background:
+    radial-gradient(ellipse at 78% 22%, rgb(212 237 131 / 18%), transparent 32%),
+    linear-gradient(120deg, #08251d 8%, #12382c 62%, #234835);
+}
+
+.summit-banner,
+.summit-hero-scrim {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.summit-banner {
+  object-fit: cover;
+}
+
+.summit-hero-scrim {
+  background:
+    linear-gradient(90deg, rgb(5 28 21 / 94%), rgb(5 28 21 / 76%) 55%, rgb(5 28 21 / 42%)),
+    linear-gradient(0deg, rgb(5 28 21 / 40%), transparent 45%);
+}
+
+.summit-hero-content {
+  position: relative;
+  z-index: 1;
+  padding-block: clamp(5rem, 10vw, 8rem);
+}
+
+.summit-eyebrow,
+.summit-kicker {
+  margin: 0 0 0.9rem;
+  color: #77964f;
+  font-size: 0.73rem;
+  font-weight: 750;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.summit-eyebrow {
+  color: #d4ed83;
+}
+
+.summit-eyebrow span {
+  margin-right: 0.35rem;
+}
+
+.summit-status {
+  display: inline-flex;
+  margin: 0 0 1rem;
+  padding: 0.35rem 0.75rem;
+  border: 1px solid rgb(212 237 131 / 40%);
+  border-radius: 999px;
+  color: #e1f49e;
+  background: rgb(212 237 131 / 9%);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.summit-status-cancelled {
+  border-color: rgb(255 177 167 / 45%);
+  color: #ffc2b9;
+  background: rgb(255 177 167 / 10%);
+}
+
+.summit-hero h1 {
+  max-width: 850px;
+  margin: 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(3.2rem, 7vw, 6.2rem);
+  font-weight: 500;
+  letter-spacing: -0.055em;
+  line-height: 0.98;
+  text-wrap: balance;
+}
+
+.summit-intro {
+  max-width: 660px;
+  margin: 1.5rem 0 0;
+  color: #d7e3d9;
+  font-size: clamp(1rem, 1.6vw, 1.2rem);
+  line-height: 1.75;
+}
+
+.summit-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 2rem;
+}
+
+.summit-button {
+  display: inline-flex;
+  min-height: 3.2rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 0.8rem 1.25rem;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font-size: 0.88rem;
+  font-weight: 750;
+  transition: transform 160ms ease, background 160ms ease, border-color 160ms ease;
+}
+
+.summit-button:hover {
+  transform: translateY(-2px);
+}
+
+.summit-button-primary {
+  color: #08251d;
+  background: #d4ed83;
+}
+
+.summit-button-primary:hover {
+  background: #e1f49e;
+}
+
+.summit-button-quiet {
+  border-color: rgb(255 255 255 / 35%);
+  color: #fff;
+  background: rgb(255 255 255 / 5%);
+}
+
+.summit-button-disabled {
+  color: #dce6df;
+  background: #53665d;
+  cursor: not-allowed;
+}
+
+.summit-hero-mark {
+  position: absolute;
+  right: max(3rem, calc((100vw - 1120px) / 2));
+  bottom: 3rem;
+  color: rgb(255 255 255 / 20%);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  line-height: 1.7;
+  text-align: right;
+}
+
+.summit-hero-mark span {
+  color: rgb(212 237 131 / 60%);
+}
+
+.summit-section {
+  padding-block: clamp(4rem, 8vw, 6.5rem);
+}
+
+.summit-section-heading {
+  max-width: 620px;
+}
+
+.summit-section-heading h2,
+.summit-register-card h2 {
+  margin: 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(2.3rem, 4.5vw, 3.8rem);
+  font-weight: 500;
+  letter-spacing: -0.045em;
+  line-height: 1.08;
+  text-wrap: balance;
+}
+
+.summit-section-heading h2 em,
+.summit-register-card h2 em {
+  color: #61833d;
+  font-weight: 500;
+}
+
+.summit-section-heading > p:last-child {
+  color: #68766e;
+  line-height: 1.75;
+}
+
+.summit-theme-section {
+  background: #fff;
+}
+
+.summit-theme-layout {
+  display: grid;
+  grid-template-columns: 0.8fr 1.2fr;
+  align-items: center;
+  gap: 4rem;
+}
+
+.summit-theme-card {
+  position: relative;
+  padding: clamp(1.6rem, 4vw, 3rem);
+  border: 1px solid #e5e9df;
+  border-radius: 1.25rem;
+  background: #f7f8f3;
+}
+
+.summit-theme-icon {
+  display: grid;
+  width: 2.75rem;
+  height: 2.75rem;
+  place-items: center;
+  margin-bottom: 1.3rem;
+  border-radius: 50%;
+  color: #08251d;
+  background: #d4ed83;
+}
+
+.summit-theme-card h3 {
+  margin: 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.5rem, 2.4vw, 2.1rem);
+  font-weight: 500;
+  line-height: 1.25;
+}
+
+.summit-theme-card p,
+.summit-objective p {
+  margin: 0.8rem 0 0;
+  color: #68766e;
+  line-height: 1.7;
+}
+
+.summit-objectives {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 2.5rem;
+}
+
+.summit-objective {
+  padding: 1.5rem;
+  border-top: 1px solid #dfe5d9;
+}
+
+.summit-objective > span,
+.summit-audience-grid article > span {
+  color: #7e9e50;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+}
+
+.summit-objective h3,
+.summit-audience-grid h3 {
+  margin: 0.7rem 0 0;
+  font-size: 1rem;
+  line-height: 1.45;
+}
+
+.summit-info-section {
+  background: #eff2e9;
+}
+
+.summit-centered-heading {
+  margin: 0 auto 2.5rem;
+  text-align: center;
+}
+
+.summit-info-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.summit-info-card {
+  min-height: 230px;
+  padding: 1.6rem;
+  border: 1px solid #e2e7dc;
+  border-radius: 1rem;
+  background: #fff;
+}
+
+.summit-info-icon {
+  display: grid;
+  width: 2.6rem;
+  height: 2.6rem;
+  place-items: center;
+  border-radius: 0.8rem;
+  color: #163729;
+  background: #edf4d6;
+  font-size: 1.2rem;
+}
+
+.summit-info-label {
+  margin: 1.25rem 0 0.3rem;
+  color: #77964f;
+  font-size: 0.7rem;
+  font-weight: 750;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.summit-info-card h3 {
+  margin: 0;
+  font-size: 1.15rem;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.summit-info-card > p:last-child {
+  margin: 0.45rem 0 0;
+  color: #68766e;
+  font-size: 0.82rem;
+}
+
+.summit-two-column {
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  align-items: center;
+  gap: 5rem;
+}
+
+.summit-benefits {
+  display: grid;
+  gap: 1.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.summit-benefits li {
+  display: grid;
+  grid-template-columns: 2.5rem 1fr;
+  gap: 0.9rem;
+}
+
+.summit-benefits li > span {
+  display: grid;
+  width: 2.5rem;
+  height: 2.5rem;
+  place-items: center;
+  border-radius: 50%;
+  color: #163729;
+  background: #e9f2ce;
+}
+
+.summit-benefits strong {
+  font-size: 1rem;
+}
+
+.summit-benefits p {
+  margin: 0.3rem 0 0;
+  color: #68766e;
+  line-height: 1.65;
+}
+
+.summit-audience-section {
+  color: #fff;
+  background: #0c2b21;
+}
+
+.summit-audience-section .summit-kicker {
+  color: #d4ed83;
+}
+
+.summit-audience-section .summit-section-heading h2 em {
+  color: #d4ed83;
+}
+
+.summit-audience-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.8rem;
+  margin-top: 2.5rem;
+}
+
+.summit-audience-grid article {
+  min-height: 165px;
+  padding: 1.35rem;
+  border: 1px solid rgb(255 255 255 / 15%);
+  border-radius: 1rem;
+  background: rgb(255 255 255 / 4%);
+}
+
+.summit-audience-grid article > span {
+  color: #d4ed83;
+}
+
+.summit-activities-section {
+  background: #fff;
+}
+
+.summit-activities-layout,
+.summit-faq-layout {
+  display: grid;
+  grid-template-columns: 0.8fr 1.2fr;
+  gap: 5rem;
+}
+
+.summit-activity-list {
+  border-top: 1px solid #e5e9df;
+}
+
+.summit-activity-list > div {
+  display: grid;
+  grid-template-columns: 3rem 1fr;
+  gap: 0.75rem;
+  align-items: center;
+  padding: 1.15rem 0;
+  border-bottom: 1px solid #e5e9df;
+}
+
+.summit-activity-list span {
+  color: #7e9e50;
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.summit-activity-list p {
+  margin: 0;
+  font-weight: 650;
+}
+
+.summit-faq-section {
+  padding-block: clamp(4rem, 8vw, 6rem);
+  background: #eff2e9;
+}
+
+.summit-faq-list details {
+  border-bottom: 1px solid #d9e0d4;
+}
+
+.summit-faq-list summary {
+  padding: 1.1rem 2rem 1.1rem 0;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.summit-faq-list details p {
+  margin: 0;
+  padding: 0 0 1.1rem;
+  color: #68766e;
+  line-height: 1.7;
+}
+
+.summit-register-section {
+  padding-block: clamp(3rem, 7vw, 5rem);
+  color: #fff;
+  background: #08251d;
+}
+
+.summit-register-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+}
+
+.summit-register-card .summit-kicker {
+  color: #d4ed83;
+}
+
+.summit-register-card h2 {
+  max-width: 650px;
+}
+
+.summit-register-card h2 em {
+  color: #d4ed83;
+}
+
+.summit-register-card > div > p:last-child {
+  max-width: 550px;
+  margin: 1rem 0 0;
+  color: #c8d6cc;
+}
+
+.summit-register-card > .summit-button {
+  flex-shrink: 0;
+}
+
+@media (max-width: 850px) {
+  .summit-theme-layout,
+  .summit-two-column,
+  .summit-activities-layout,
+  .summit-faq-layout {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .summit-audience-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .summit-shell {
+    width: min(100% - 2rem, 1120px);
+  }
+
+  .summit-hero {
+    min-height: 570px;
+  }
+
+  .summit-hero-content {
+    padding-block: 5rem;
+  }
+
+  .summit-hero h1 {
+    font-size: clamp(2.8rem, 13vw, 4.4rem);
+  }
+
+  .summit-hero-mark {
+    right: 1rem;
+    bottom: 1rem;
+  }
+
+  .summit-objectives,
+  .summit-info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .summit-objective {
+    padding: 1.2rem 0;
+  }
+
+  .summit-info-card {
+    min-height: auto;
+  }
+
+  .summit-audience-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .summit-audience-grid article {
+    min-height: auto;
+  }
+
+  .summit-register-card {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .summit-button {
+    transition: none;
+  }
+}

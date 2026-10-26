@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Submission {{ submission.reference }} | YSSE{% endblock %}
+{% block styles %}<link rel="stylesheet" href="{% static 'competitions/css/competitions.css' %}">{% endblock %}
+
+{% block content %}
+  <section class="competition-form-section">
+    <div class="competition-form-shell">
+      <a class="competition-back-link" href="{% url 'competitions:my-submissions' %}">← My submissions</a>
+      <p class="competition-kicker">{{ submission.competition.name }}</p>
+      <h1>Submission <em>received.</em></h1>
+      <div class="competition-confirmation">
+        <p><strong>Reference</strong> {{ submission.reference }}</p>
+        <p><strong>Status</strong> {{ submission.get_status_display }}</p>
+        {% if submission.submitted_at %}<p><strong>Submitted</strong> {{ submission.submitted_at|date:"F j, Y g:i A" }}</p>{% endif %}
+        {% if submission.attachment %}
+          <p><strong>Attachment</strong> <a href="{% url 'competitions:submission-file' submission.reference %}">Download private file</a></p>
+        {% endif %}
+      </div>
+      <div class="competition-submission-data">
+        {% for field in submission_fields %}
+          <section>
+            <h2>{{ field.label }}</h2>
+            <p>{{ field.value|default:"—"|linebreaksbr }}</p>
+          </section>
+        {% endfor %}
+      </div>
+      {% if submission.reviewer_notes %}
+        <section class="competition-review-note">
+          <h2>Reviewer feedback</h2>
+          <p>{{ submission.reviewer_notes|linebreaksbr }}</p>
+        </section>
+      {% endif %}
+      {% if can_edit %}
+        <a class="competition-button competition-button-primary" href="{% url 'competitions:submit' submission.competition.slug %}">Continue or edit entry</a>
+      {% endif %}
+    </div>
+  </section>
+{% endblock %}

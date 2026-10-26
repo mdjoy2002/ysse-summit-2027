@@ -1,0 +1,462 @@
+YSSE Social Entrepreneurship Summit 2027
+========================================
+
+Completed task history
+----------------------
+
+[2026-10-26] Initial Django project setup
+- Inspected the workspace; no existing application files were present.
+- Added Django 5.2 project configuration with separate base, development, and production settings.
+- Added the core Django app, URL configuration, and ASGI/WSGI entry points.
+- Configured environment-based settings, SQLite by default, PostgreSQL URL support,
+  static/media paths, and Django/Python logging.
+- Added production security settings and generic 404/500 error pages.
+- Added requirements.txt, .env.example, .gitignore, and README.md with architecture,
+  initial data model recommendations, and setup instructions.
+- Installed dependencies into the local .venv and applied built-in Django migrations
+  to the local SQLite database.
+- Verified Django checks, migration state, production settings, PostgreSQL URL parsing,
+  Admin login, and generic error page rendering.
+- No homepage or summit business modules were implemented.
+
+[2026-10-26] Added persistent task-history tracking
+- Created planning.txt to record completed project tasks.
+- Added a project instruction directing coding agents to append a dated summary after
+  each completed project task, including changed files and verification results.
+- This history is agent-maintained when project tasks are completed; it is not a
+  background process and does not update while no agent is working.
+
+[2026-10-26] Implemented the homepage
+- Added the `home` app with an editable single-row summit event configuration,
+  homepage highlights, publishable featured speakers, and draft/published/archived
+  announcements.
+- Added an initial migration that seeds the event configuration and the five
+  user-confirmed highlights; no placeholder speakers or announcements were added.
+- Added staff-only Django Admin management, announcement publish/unpublish/archive
+  actions, 5 MB image upload limits, and HTTPS-only hero video URLs.
+- Added a shared site base template, reusable navbar/footer, homepage sections,
+  responsive CSS, local SVG favicon, and a browser countdown using the configured
+  timezone-aware event start.
+- Added a responsive home page with empty states, safe internal CTA validation,
+  optional poster/video media, featured speaker cards, and published-news cards.
+- Updated Django static-file discovery, requirements with Pillow, and README
+  architecture/setup documentation.
+- Files: `requirements.txt`, `config/settings/base.py`, `config/urls.py`,
+  `apps/home/`, `templates/base.html`, `templates/partials/`, `static/`,
+  `README.md`.
+- Checks: `python manage.py check` passed; `makemigrations --check --dry-run`
+  reported no model changes; `migrate` applied `home.0001_initial`; `collectstatic
+  --dry-run --noinput` completed and reported 131 static files; Python compilation
+  passed; all 14 `apps.home` tests passed.
+- Browser checks: homepage and all local assets returned HTTP 200; mobile layout
+  at 390px had no horizontal overflow and its menu opened; internal anchors resolved;
+  countdown arithmetic was verified before and after the target and the expired
+  message rendered at a past event time.
+- No registration, competitions, speakers, or other standalone pages were built.
+
+[2026-10-26] Added shared YSSE logo and developer contact links
+- Copied the supplied `ysse logo/ysse logo.png` into the Django static assets and
+  replaced text-only branding in the shared navbar and footer with the real logo.
+- Added a clickable “Design & development by MD. Imtiaz Sarder” footer disclosure
+  that reveals Facebook and WhatsApp icons/links for the supplied profiles.
+- Made the footer shared on the branded 404 and 500 pages as well as pages using
+  the global base template; the footer stays at the viewport bottom on short pages.
+- Added responsive styling and tests for branding, contact links, and shared error
+  page layout.
+- Files: `static/images/ysse-logo.png`, `templates/partials/navbar.html`,
+  `templates/partials/footer.html`, `templates/base.html`, `templates/404.html`,
+  `templates/500.html`, `static/css/site.css`, `apps/home/tests.py`, `README.md`.
+- Checks: `python manage.py check` passed; all 17 `apps.home` tests passed,
+  including a production-style custom 404 page response;
+  Python compilation passed; `collectstatic --dry-run --noinput` found and copied
+  the YSSE logo with the other shared assets.
+- Browser check: both navbar/footer logos rendered, the favicon uses the supplied
+  logo, clicking the developer credit revealed Facebook and WhatsApp SVG icons with
+  the requested destinations, and the 390px mobile layout had no horizontal overflow.
+
+[2026-10-26] Implemented the About YSSE page
+- Added the `about` app and `/about/` route, reusing the global base template,
+  navbar, footer, YSSE logo, and site design tokens.
+- Added editable timeline periods with milestone inlines; seeded exactly the four
+  requested periods and their twelve supplied milestones, with no extra history.
+- Added the four proposed impact figures to the database as unpublished drafts.
+  Public output hides them until staff verify and publish each statistic.
+- Added a singleton founder/president vision profile with optional picture, HTTPS
+  video link and thumbnail; publication requires a name, designation, and message.
+- Added editable YSSE Academy, YSSE Shop, YSSE IT, and YSSE Blog cards with
+  optional images/HTTPS destinations, ordering, and publication controls.
+- Added responsive timeline, verified-impact, founder, and wings sections with
+  optional-media and empty-content states; updated navbar About navigation.
+- Added migration `apps/about/migrations/0001_initial.py` and documented the app,
+  seeded data and Admin workflow in `README.md`.
+- Files: `apps/about/`, `config/settings/base.py`, `config/urls.py`,
+  `templates/partials/navbar.html`, `apps/about/static/about/css/about.css`,
+  `README.md`.
+- Checks: `python manage.py check` passed; migration drift check reported no
+  changes; `about.0001_initial` applied; Python compilation passed; all 33 tests
+  across `apps.about` and `apps.home` passed.
+- Browser checks: `/about/` and its stylesheet returned HTTP 200; desktop and
+  390px mobile layouts had no horizontal overflow; four timeline periods, four
+  wings, empty founder state, and unpublished-statistics message rendered.
+- No Summit Details page was implemented.
+
+[2026-10-26] Implemented the Summit 2027 details page
+- Added the `/summit/` page in a presentation-only `summit` app. It reuses the
+  single `home.SummitEvent` record and shared site template; no duplicate event
+  model or registration module was introduced.
+- Expanded the event record/Admin with editable theme, description, end time,
+  status, optional banner, and registration availability. Added an event interval
+  validation rule and seeded the proposed venue only when the existing value was
+  empty.
+- Kept Bangladesh timezone handling explicit (`Asia/Dhaka`, `USE_TZ=True`); the
+  configured interval is 08:30 AM–06:00 PM on February 1, 2027. The page renders
+  event date/time in Dhaka time and shows an empty-state when optional venue,
+  description, or banner content is missing.
+- Added premium responsive sections for the theme/objectives, event information,
+  reasons to attend, target audiences, expected activity areas, FAQs, and
+  registration call-to-action. The registration button resolves the existing
+  homepage `#registration` anchor and displays a disabled state when registration
+  is unavailable.
+- Applied the same availability state to the homepage hero and registration
+  section; updated the shared “The Summit” navigation destination.
+- Added migrations `home.0002_summit_details` and
+  `home.0003_alter_summitevent_venue`; both applied locally. Updated README with
+  app responsibilities, shared data model, admin workflow, page route and tests.
+- Files: `apps/home/models.py`, `apps/home/admin.py`, `apps/home/tests.py`,
+  `apps/home/templates/home/index.html`, `apps/home/static/home/css/home.css`,
+  `apps/home/migrations/0002_summit_details.py`,
+  `apps/home/migrations/0003_alter_summitevent_venue.py`, `apps/summit/`,
+  `config/settings/base.py`, `config/urls.py`,
+  `templates/partials/navbar.html`, `README.md`.
+- Checks: `python manage.py check` passed; migration drift check reported no
+  changes; Python compilation passed; all 41 tests across `apps.summit`,
+  `apps.about`, and `apps.home` passed.
+- Browser checks: `/summit/` rendered the configured title, event details and
+  `/#registration` link; summit CSS loaded. At desktop (1440px viewport) and
+  mobile (390px viewport), document width matched layout client width (1425px
+  and 375px respectively), with no horizontal overflow.
+- No competitions module was implemented.
+
+[2026-10-26] Implemented the competitions module
+- Added the `competitions` app with six independently configurable national
+  challenges, list/detail pages, and tailored participant forms for pitch,
+  debate, poster, article, video, and changemaker-award entries.
+- Added authenticated draft/submission history, unique references, one-entry-per-
+  participant constraints, timezone-aware opening/deadline enforcement, and
+  owner/reviewer-only access to private submission downloads.
+- Added server-side upload validation for configured file extensions, byte size,
+  file signatures/container structure, and generated storage names. Private
+  storage has no public URL; settings reject placing it under media/static roots.
+- Added restricted Admin review and metadata-only CSV export. The Lens of Change
+  leaderboard remains disabled until a real scoring source is configured.
+- Seeded the six requested competitions as Upcoming. Their eligibility, rules,
+  opening/deadline times, and other unconfirmed details remain editable and
+  unpublished/unset as appropriate; submissions remain closed until configured.
+- Updated the homepage Explore Competitions CTA to `/competitions/`; migration
+  `home.0004_alter_summitevent_explore_cta_url` changes only the old default CTA
+  and preserves custom destinations. Updated the README and this task history.
+- Files: `apps/competitions/`, `templates/registration/login.html`,
+  `config/settings/base.py`, `config/urls.py`, `apps/home/models.py`,
+  `apps/home/tests.py`,
+  `apps/home/migrations/0004_alter_summitevent_explore_cta_url.py`,
+  `templates/base.html`, `templates/partials/navbar.html`, `static/css/site.css`,
+  `.env.example`, `.gitignore`, `README.md`, `planning.txt`.
+- Migrations `competitions.0001_initial`, `competitions.0002_competition_article_topic_guidelines_and_more`,
+  and `home.0004_alter_summitevent_explore_cta_url` are applied locally.
+- Checks: `manage.py check` passed; migration drift check reported no changes;
+  Python compilation passed; all 73 tests across `apps.competitions`,
+  `apps.summit`, `apps.about`, and `apps.home` passed.
+- Browser checks: the catalog displayed all six competitions; the Impact 2027
+  detail page and both stylesheets loaded; catalog/detail layouts had no
+  horizontal overflow at a 390px viewport; the homepage Explore CTA resolved to
+  `/competitions/`; unauthenticated submission access redirected to the login
+  page with its return URL. All competition and homepage migrations show applied.
+- Participants require an existing Django account; authorized reviewers require
+  the explicit competition-submission review permission. No speaker module or
+  signup flow was added.
+
+[2026-10-26] Implemented Speakers and VVIP Guests
+- Reused and expanded `home.FeaturedSpeaker` as the single speaker profile model;
+  no duplicate profile table or public personal contact fields were added.
+- Added the `speakers` app with the six requested editable categories, a public
+  directory and category filters, and dedicated accessible profile pages.
+- Profiles now support unique slugs, multiple categories, full-length biography,
+  official designation, session topic, image, display order, homepage feature
+  flag, publication state, and confirmed/unconfirmed participation status.
+- Only published profiles assigned to at least one published category appear in
+  the public directory or homepage; unconfirmed invitations are explicitly
+  labelled. Existing uncategorized profiles are retained but hidden until Admin
+  assigns categories; no placeholder speakers were seeded.
+- Moved the speaker Admin into the speakers app and added search, filters,
+  category assignment, ordering, publication controls, and model permissions.
+  Homepage cards and shared navigation link to speaker pages.
+- Added migrations `speakers.0001_initial`,
+  `home.0005_alter_featuredspeaker_options_and_more`, and
+  `home.0006_alter_featuredspeaker_slug`. Existing profile records and field
+  values were preserved, unique slugs were populated, and legacy participation
+  status was set to unconfirmed.
+- Updated `README.md` with app responsibility, category/publication behavior,
+  migration names and manual verification guidance.
+- Files: `apps/speakers/` (app config, category model, views, URLs, Admin,
+  tests, migrations, directory/profile templates and responsive CSS),
+  `apps/home/models.py`, `apps/home/services.py`, `apps/home/admin.py`,
+  `apps/home/tests.py`, `apps/home/templates/home/index.html`,
+  `apps/home/static/home/css/home.css`, `config/settings/base.py`,
+  `config/urls.py`, `templates/partials/navbar.html`, `README.md`,
+  `planning.txt`.
+- Checks: `manage.py migrate` applied the speaker migrations;
+  `manage.py check` passed; migration drift check found no changes; Python
+  compilation passed; all 85 tests across `apps.speakers`, `apps.competitions`,
+  `apps.summit`, `apps.about`, and `apps.home` passed.
+- Browser checks: directory, empty-category behavior, and speaker/home styles
+  loaded; all six category filters were present; at 1440px and 390px viewports
+  the document had no horizontal overflow. The existing uncategorized demo
+  profile remains stored but is not shown publicly until assigned a category.
+- No schedule module was implemented.
+
+[2026-10-26] Implemented the Summit 2027 schedule
+- Added the `schedule` app with an Admin-managed `ScheduleSession` model linked
+  to the existing `home.SummitEvent`, `home.FeaturedSpeaker`, and
+  `competitions.Competition` records.
+- Added the six requested agenda entries as migration data on the configured
+  event date, with Asia/Dhaka times; optional end time, venue, speaker and
+  competition remain unset until confirmed/edited by an administrator.
+- Added timezone-aware chronological schedule rendering, responsive vertical
+  timeline cards, published speaker/competition links, venue/date context, and
+  an empty state. Schedule is linked from desktop and mobile navigation.
+- Added Admin search, filters, date hierarchy, speaker/competition autocomplete,
+  ordering and publication controls. Model validation and a database constraint
+  reject end times that are not after start times.
+- Added `apps/schedule/migrations/0001_initial.py` and documented the app,
+  relationship choices, migration command and verification in `README.md`.
+- Files: `apps/schedule/` (app config, model, view, URL, Admin, tests, migration,
+  template and responsive CSS), `config/settings/base.py`, `config/urls.py`,
+  `templates/partials/navbar.html`, `README.md`, `planning.txt`.
+- Migration `schedule.0001_initial` applied locally; it seeds the six requested
+  agenda titles using the shared event configuration date. No partners module
+  or unconfirmed speaker/session facts were added.
+- Checks: `manage.py check` passed; migration drift check found no changes;
+  Python compilation passed; all 96 tests across `apps.schedule`,
+  `apps.speakers`, `apps.competitions`, `apps.summit`, `apps.about`, and
+  `apps.home` passed.
+- Browser checks: `/schedule/` rendered all six entries and the Bangladesh date;
+  its stylesheet loaded; desktop at 1440px and mobile at 390px had no horizontal
+  overflow. All schedule entries displayed their configured local time.
+- No partners module was implemented.
+
+Update convention
+-----------------
+After completing each project task, append a dated entry to this file. Summarize what
+was done, list important files created or modified, and record checks/tests that were
+actually run and their results. Do not mark uncompleted work as complete or overwrite
+earlier entries.
+
+[2026-10-26] Implemented Partners and Sponsors
+- Added editable sponsor categories and sponsor profiles, with HTTPS website checks,
+  validated image uploads, publication controls, and Admin management.
+- Added Admin-managed sponsorship deck upload and a validated attachment download
+  endpoint; PDF extension, size, signature, and EOF checks are enforced.
+- Added a privacy-conscious partnership inquiry form with consent, server-side
+  validation, CSRF, honeypot spam control, per-IP hourly rate limiting, and review
+  statuses that never automatically approve a partnership.
+- Added the responsive `/partners/` directory, empty states, inquiry form, styles,
+  navigation link, documentation, models, migration, and tests.
+- Files: `apps/partners/` (app config, models, validators, forms, services, views,
+  URLs, Admin, migration, tests, template, CSS), `config/settings/base.py`,
+  `config/urls.py`, `templates/partials/navbar.html`, `README.md`, `planning.txt`.
+- Applied `partners.0001_initial`; `showmigrations partners` confirmed it applied.
+- `makemigrations --check --dry-run` reported no changes; `manage.py check`
+  passed; compilation passed; all 120 tests across partners, schedule, speakers,
+  competitions, summit, about, and home passed.
+- Browser verified `/partners/` renders with empty sponsor state and inquiry form;
+  at a 390px requested viewport, document width matched the rendered viewport
+  (375px), with no horizontal overflow. The local server was stopped after testing.
+- Registration and payment modules were not implemented.
+
+[2026-10-26] Implemented secure registration and ticketing
+- Added `registrations` app models for three pass types and participant
+  registrations linked to the existing `home.SummitEvent` and Django User.
+- Seeded Member, General Delegate, and VIP passes as unpublished/unavailable
+  drafts with NULL, unconfirmed prices; configured benefit text is snapshot into
+  each registration. One registration per participant/event is database-enforced.
+- Added sale-window and capacity checks, authenticated registration/history,
+  participant-only registration/ticket pages, printable UUID tickets, and
+  permission-gated entry verification. No QR or live payment gateway was added.
+- Added separate registration/payment statuses, staff-only audited payment,
+  refund, approval, and cancellation transitions. Tickets are generated only
+  after the configured payment and approval requirements are satisfied.
+- Added operational email notification service, environment-driven SMTP
+  settings, Admin pass controls, private registration review, restricted
+  workflow actions, and a CSV status report without participant contact details.
+- Wired the homepage, Summit page, and shared navbar registration CTAs to the
+  new pass directory. Updated project architecture and operator documentation.
+- Files: `apps/registrations/` (app config, models, forms, services, views,
+  URLs, Admin, migrations, tests, templates, CSS), `config/settings/base.py`,
+  `config/urls.py`, `.env.example`, `apps/home/services.py`,
+  `apps/home/templates/home/index.html`, `apps/home/tests.py`,
+  `apps/summit/services.py`, `apps/summit/tests.py`,
+  `templates/partials/navbar.html`, `README.md`, `planning.txt`.
+- Applied `registrations.0001_initial` and `0002_registration_status_audit_note_and_more`;
+  migrations seed the three unpublished passes and were confirmed applied.
+- Migration drift check reported no changes; Django system checks and Python
+  compilation passed. All 146 tests across registrations, partners, schedule,
+  speakers, competitions, summit, about, and home passed.
+- Browser verified `/registrations/` and its unpriced draft empty state,
+  login-required registration redirect, and home/Summit CTA routes. The mobile
+  registration page had no horizontal overflow (375px rendered viewport and
+  document widths); local server was stopped after verification.
+- No guest signup, public account creation, payment gateway, or QR generation
+  was implemented; authenticated Django accounts are required.
+
+[2026-10-26] Implemented provider-neutral payment integration layer
+- Added provider contract, fail-closed unconfigured adapter, payment attempt and
+  event models, owner-protected checkout/status views, and read-only Admin
+  diagnostics. No gateway SDK, merchant credential, live adapter, or real
+  transaction was added.
+- Checkout amounts come from locked registration data; provider redirects are
+  HTTPS-host-allowlisted, callback URLs use a configured canonical HTTPS origin,
+  and browser returns never confirm payment. Callbacks are size-limited,
+  idempotent, digest-only in the audit trail, and require adapter-side
+  verification plus amount/currency matching.
+- Added one-pending-attempt database constraint, timeout and late-success
+  reconciliation, permission-gated manual paid/refund reconciliation, and sync
+  of reconciled transactions with registration status.
+- Researched provider documentation: bKash documents tokenized checkout create,
+  execute and query; SSLCOMMERZ documents hosted checkout, IPN and server-side
+  Order Validation. Direct public Nagad API documentation and Rocket online
+  merchant API specification were not verified; exact account-level payment
+  channels still require merchant onboarding.
+- Files: `apps/payments/` (models, migrations, provider contract, disabled
+  adapter, services, views, URLs, Admin, tests, status template),
+  `apps/registrations/services.py`, `apps/registrations/admin.py`,
+  `config/settings/base.py`, `config/urls.py`, `.env.example`, `README.md`,
+  `planning.txt`.
+- Applied and confirmed `registrations.0003` and `payments.0001` through
+  `payments.0003`. `manage.py check` passed; migration drift check reported no
+  changes; all 169 tests across payments, registrations, partners, schedule,
+  speakers, competitions, summit, about and home passed.
+- Sandbox behavior was tested exclusively with a network-free fake provider.
+  No sandbox credentials/provider adapter exist yet; payments remain disabled
+  until merchant approval, credentials, channel confirmation and adapter setup.
+
+[2026-10-26] Added short name-based Summit registration references
+- New registrations now receive an uppercase four-character name prefix and a
+  six-character random suffix (for example `AMIN-7K4P2Z`); non-ASCII-only names
+  use `REG`. Database uniqueness is enforced and reference collisions retry.
+- Converted the registration reference column to text without rewriting
+  existing UUID values, and updated registration detail/payment-start routes
+  to accept both prior UUID references and new short references.
+- Files: `apps/registrations/models.py`, `apps/registrations/services.py`,
+  `apps/registrations/urls.py`, `apps/registrations/migrations/0004_alter_registration_reference.py`,
+  `apps/registrations/tests.py`, `apps/payments/urls.py`, `README.md`,
+  `planning.txt`.
+- Applied `registrations.0004_alter_registration_reference`. Django check
+  passed; migration drift check reported no changes; all 171 tests across
+  payments, registrations, partners, schedule, speakers, competitions, summit,
+  about and home passed.
+
+[2026-10-26] Made payment availability visible to participants
+- Added a registration-detail payment panel showing the configured amount and
+  availability of bKash, Nagad, Rocket, and card methods. It only renders a
+  checkout form for methods actually advertised by a configured provider;
+  unavailable methods clearly explain that merchant/provider setup is needed.
+- Added responsive method status styling and regression assertions for the
+  disabled-provider display. No simulated payment success or real payment
+  method was enabled.
+- Files: `apps/registrations/views.py`,
+  `apps/registrations/templates/registrations/detail.html`,
+  `apps/registrations/static/registrations/css/registrations.css`,
+  `apps/payments/tests.py`, `README.md`, `planning.txt`.
+- Django check passed, migration drift check reported no changes, and all 51
+  focused payment/registration tests passed.
+
+[2026-10-26] Implemented public contact and information modules
+- Added `contact` app with singleton official contact/social settings, private
+  contact inquiries, categorized FAQs, organizer-review-gated privacy/terms,
+  publishable press releases and private upload storage, plus double-opt-in
+  newsletter subscriptions and token-based unsubscribe.
+- Reworked the shared responsive footer with navigation, FAQ/legal/press links,
+  configurable official social links, official email and a CSRF-protected
+  newsletter form. No social URLs were invented; all are blank until configured.
+- Contact and newsletter forms validate input/consent, use honeypots and
+  per-IP/hour limits. Newsletter responses avoid disclosing whether an address
+  is already subscribed. Press images/PDFs are streamed only for published
+  releases; PDF type, signature, EOF and 10 MB size are checked.
+- Seeded `ysse.hrd@gmail.com` contact settings and unpublished policy drafts.
+  Policy publication requires organizer review; no legal compliance claim or
+  unverified FAQ/press content was added.
+- Files: `apps/contact/` (app config, models, forms, validators, services,
+  views, URLs, Admin, context processor, migration, tests, templates and CSS),
+  `config/settings/base.py`, `config/urls.py`, shared navbar/footer, `README.md`,
+  `planning.txt`.
+- Applied `contact.0001_initial`. `manage.py check` passed; migration drift
+  check found no changes; all 187 tests across contact and existing site apps
+  passed. Browser verified contact, FAQ, policy, press and newsletter pages at
+  375px rendered width; each page had no horizontal overflow.
+- Configure shared cache and environment-based SMTP for multi-worker production
+  rate limiting and live newsletter confirmation delivery.
+
+[2026-10-26] Keeping moderator record management inside Admin Panel 2
+- Updated the sidebar management shortcuts to open permission-gated dashboard
+  record lists instead of Django Admin URLs. Removed Django Admin links from the
+  dashboard interface.
+- Added dashboard-native record details and configured searchable, sortable,
+  filterable tables for registered models, using each model's Admin columns and
+  display fieldsets. Record pages remain read-only; existing privileged
+  workflow actions remain unchanged.
+- Added tests for access control, dashboard-local links, detail rendering, and
+  list rendering across every registered Admin model.
+- Files: `apps/dashboard/services.py`, `apps/dashboard/views.py`,
+  `apps/dashboard/urls.py`, `apps/dashboard/tests.py`,
+  `apps/dashboard/static/dashboard/css/dashboard.css`,
+  `templates/dashboard/base.html`, `overview.html`, `records_index.html`,
+  `records_list.html`, `records_detail.html`, `README.md`, `planning.txt`.
+- `manage.py test apps.dashboard` passed (18 tests); `manage.py check` passed;
+  migration drift check reported no changes.
+
+[2026-10-26] Enabling superuser management in Admin Panel 2
+- Expanded the dashboard's registered-model interface for superusers with
+  Admin-configured add/edit forms, inline records, list editing, confirmed
+  deletion, registered bulk actions, and model-specific permissions and save
+  hooks. Django Admin remains available separately.
+- Added a regression test confirming user password hashes are never shown on
+  dashboard record details.
+- Files: `apps/dashboard/services.py`, `apps/dashboard/views.py`,
+  `apps/dashboard/urls.py`, `apps/dashboard/tests.py`,
+  `apps/dashboard/static/dashboard/css/dashboard.css`,
+  `templates/dashboard/base.html`, `records_index.html`, `records_list.html`,
+  `records_detail.html`, `records_form.html`, `records_delete.html`,
+  `records_bulk_delete.html`, `overview.html`, `README.md`, `planning.txt`.
+- The focused password-privacy test passed; all 221 project tests passed;
+  `manage.py check` passed; `makemigrations --check --dry-run` reported no
+  changes.
+
+[2026-10-26] Separating moderator sign-in and enabling guest registration
+- Added the moderator-only Admin Panel 2 login at `/admin-2/`; dashboard
+  protected views redirect there, while regular account login remains available
+  for other participant features. Moved Django Admin to `/ysse2014/`.
+- Enabled guest pass registration without login. Guest registrations use a
+  nullable participant, per-event guest email uniqueness, and same-browser
+  session access for pending registration and checkout. The demo payment flow
+  can complete without an account; a confirmed guest ticket uses its UUID
+  bearer link, included in ticket notification email.
+- Updated public pass/register copy, dashboard login styling, existing Admin
+  URL expectations, and setup documentation. Added regression coverage for
+  guest registration/access, guest demo payment and ticket delivery, Admin
+  routes, and moderator-only sign-in.
+- Files: `config/urls.py`, `config/settings/base.py`,
+  `apps/dashboard/views.py`, `apps/dashboard/tests.py`,
+  `apps/dashboard/static/dashboard/css/dashboard.css`,
+  `templates/dashboard/login.html`, `apps/registrations/models.py`,
+  `apps/registrations/services.py`, `apps/registrations/views.py`,
+  `apps/registrations/tests.py`,
+  `apps/registrations/templates/registrations/pass_list.html`,
+  `apps/registrations/templates/registrations/register.html`,
+  `apps/registrations/migrations/0005_guest_registration_access.py`,
+  `apps/payments/views.py`, `apps/payments/tests.py`,
+  `apps/about/tests.py`, `apps/home/tests.py`, `apps/partners/tests.py`,
+  `apps/schedule/tests.py`, `apps/speakers/tests.py`, `README.md`,
+  `planning.txt`.
+- Applied `registrations.0005_guest_registration_access` to the development
+  database. All 227 project tests passed; `manage.py check` passed;
+  `makemigrations --check --dry-run` reported no changes.

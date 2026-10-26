@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block title %}Temporary Issue | YSSE{% endblock %}
+{% block content %}
+  <section class="error-page" aria-labelledby="error-title">
+    <p class="error-code" aria-hidden="true">500</p>
+    <h1 id="error-title">Temporary Issue</h1>
+    <p>We are experiencing a temporary issue. Please try again after a little while.</p>
+    <a class="error-home-link" href="{% url 'home:index' %}">Back to Home</a>
+  </section>
+{% endblock %}

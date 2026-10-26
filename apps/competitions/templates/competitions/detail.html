@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+{% load static tz %}
+
+{% block title %}{{ competition.name }} | YSSE Competitions{% endblock %}
+{% block meta_description %}{{ competition.short_description }}{% endblock %}
+{% block styles %}<link rel="stylesheet" href="{% static 'competitions/css/competitions.css' %}">{% endblock %}
+
+{% block content %}
+  <section class="competition-detail-hero">
+    {% if competition.cover_image %}
+      <img class="competition-detail-cover" src="{{ competition.cover_image.url }}" alt="">
+    {% endif %}
+    <div class="competition-detail-scrim" aria-hidden="true"></div>
+    <div class="competition-shell competition-detail-content">
+      <a class="competition-back-link" href="{% url 'competitions:list' %}">← All competitions</a>
+      <span class="competition-status competition-status-{{ competition.status }}">{{ competition.get_status_display }}</span>
+      <h1>{{ competition.name }}</h1>
+      <p class="competition-detail-lede">{{ competition.short_description }}</p>
+      <div class="competition-detail-actions">
+        {% if user.is_authenticated %}
+          {% if can_submit %}
+            <a class="competition-button competition-button-primary" href="{% url 'competitions:submit' competition.slug %}">
+              {% if submission %}Continue your entry{% else %}Start your entry{% endif %} <span aria-hidden="true">↗</span>
+            </a>
+          {% else %}
+            <span class="competition-button competition-button-disabled" aria-disabled="true">Submissions are not open</span>
+          {% endif %}
+          {% if submission %}
+            <a class="competition-button competition-button-outline" href="{% url 'competitions:submission-detail' submission.reference %}">View your submission</a>
+          {% endif %}
+        {% else %}
+          <a class="competition-button competition-button-primary" href="{% url 'login' %}?next={% url 'competitions:submit' competition.slug %}">Sign in to participate <span aria-hidden="true">↗</span></a>
+        {% endif %}
+      </div>
+    </div>
+  </section>
+
+  <div class="competition-shell competition-detail-layout">
+    <div class="competition-detail-main">
+      <section class="competition-content-section">
+        <p class="competition-kicker">About the competition</p>
+        {% if competition.detailed_description %}
+          <div class="competition-prose">{{ competition.detailed_description|linebreaks }}</div>
+        {% else %}
+          <p class="competition-muted">Detailed competition information will be announced soon.</p>
+        {% endif %}
+      </section>
+
+      {% if competition.submission_kind == "pitch" %}
+        <section class="competition-content-section">
+          <p class="competition-kicker">Pitch deck</p>
+          <h2>Bring your social business idea.</h2>
+          <p>Pitch deck requirements and participation options are set in the current competition rules.</p>
+          {% if competition.rulebook_file or competition.rulebook_url %}
+            <a class="competition-inline-link" href="{% url 'competitions:rulebook' competition.slug %}">Download the rulebook <span aria-hidden="true">↓</span></a>
+          {% else %}
+            <p class="competition-muted">The rulebook will be available when it is confirmed.</p>
+          {% endif %}
+        </section>
+      {% elif competition.submission_kind == "debate" %}
+        <section class="competition-content-section">
+          <p class="competition-kicker">Team debate</p>
+          <h2>Register as a team.</h2>
+          <p>Provide team member details and choose from the motions listed by the organizers.</p>
+          {% if competition.debate_motions %}
+            <h3>Debate motions</h3>
+            <ol class="competition-motion-list">
+              {% for motion in competition.debate_motions %}<li>{{ motion }}</li>{% endfor %}
+            </ol>
+          {% else %}
+            <p class="competition-muted">Debate motions will be announced soon.</p>
+          {% endif %}
+        </section>
+      {% elif competition.submission_kind == "poster" %}
+        <section class="competition-content-section">
+          <p class="competition-kicker">Poster artwork</p>
+          <h2>Present your vision visually.</h2>
+          {% if competition.design_guidelines %}
+            <div class="competition-prose">{{ competition.design_guidelines|linebreaks }}</div>
+          {% endif %}
+          {% if competition.allowed_file_extensions %}
+            <p>Accepted artwork formats: {{ competition.allowed_file_extensions|join:", "|upper }}. Maximum file size: {{ competition.max_upload_size_mb }} MB.</p>
+          {% else %}
+            <p class="competition-muted">Poster file formats and size limits will be announced soon.</p>
+          {% endif %}
+        </section>
+      {% elif competition.submission_kind == "article" %}
+        <section class="competition-content-section">
+          <p class="competition-kicker">Article contest</p>
+          <h2>Write for the YSSE Magazine.</h2>
+          {% if competition.article_min_words or competition.article_max_words %}
+            <p>Word count: {% if competition.article_min_words %}at least {{ competition.article_min_words }}{% endif %}{% if competition.article_min_words and competition.article_max_words %} and {% endif %}{% if competition.article_max_words %}no more than {{ competition.article_max_words }}{% endif %} words.</p>
+          {% else %}
+            <p class="competition-muted">Article topic and word-count requirements will be announced soon.</p>
+          {% endif %}
+          {% if competition.article_topic_guidelines %}
+            <div class="competition-prose">{{ competition.article_topic_guidelines|linebreaks }}</div>
+          {% endif %}
+        </section>
+      {% elif competition.submission_kind == "video" %}
+        <section class="competition-content-section">
+          <p class="competition-kicker">Short video / Reels</p>
+          <h2>Share a lens for change.</h2>
+          <p>Submit a video file or an approved HTTPS video link when external links are enabled. Follow the competition hashtag guidance below.</p>
+          {% if competition.hashtag_guidelines %}
+            <div class="competition-prose">{{ competition.hashtag_guidelines|linebreaks }}</div>
+          {% else %}
+            <p class="competition-muted">Hashtag guidance will be announced soon.</p>
+          {% endif %}
+          <div class="competition-leaderboard-note">
+            <strong>Leaderboard unavailable</strong>
+            <p>No verified scoring or engagement data source has been configured. No views, likes, or votes are displayed.</p>
+          </div>
+        </section>
+      {% elif competition.submission_kind == "award" %}
+        <section class="competition-content-section">
+          <p class="competition-kicker">Self or peer nomination</p>
+          <h2>Recognize a changemaker.</h2>
+          <p>Submit nominee information, achievements, and supporting evidence for the organizers’ review.</p>
+        </section>
+      {% endif %}
+
+      <section class="competition-content-section">
+        <p class="competition-kicker">Eligibility</p>
+        <h2>Who can participate?</h2>
+        {% if competition.eligibility_criteria %}
+          <div class="competition-prose">{{ competition.eligibility_criteria|linebreaks }}</div>
+        {% else %}
+          <p class="competition-muted">Eligibility criteria will be announced soon.</p>
+        {% endif %}
+      </section>
+
+      <section class="competition-content-section">
+        <p class="competition-kicker">Rules and submission</p>
+        {% if competition.rules_and_guidelines %}
+          <div class="competition-prose">{{ competition.rules_and_guidelines|linebreaks }}</div>
+        {% else %}
+          <p class="competition-muted">Detailed rules and guidelines will be announced soon.</p>
+        {% endif %}
+        {% if competition.submission_instructions %}
+          <h3>Submission instructions</h3>
+          <div class="competition-prose">{{ competition.submission_instructions|linebreaks }}</div>
+        {% endif %}
+      </section>
+    </div>
+
+    <aside class="competition-detail-sidebar" aria-label="Competition information">
+      <div class="competition-sidebar-card">
+        <p class="competition-kicker">Important dates</p>
+        {% if competition.starts_at %}
+          <p><strong>Opens</strong><br>{% timezone "Asia/Dhaka" %}{{ competition.starts_at|date:"F j, Y · g:i A" }}{% endtimezone %} Bangladesh time</p>
+        {% else %}
+          <p><strong>Opens</strong><br>To be announced</p>
+        {% endif %}
+        {% if competition.deadline %}
+          <p><strong>Deadline</strong><br>{% timezone "Asia/Dhaka" %}{{ competition.deadline|date:"F j, Y · g:i A" }}{% endtimezone %} Bangladesh time</p>
+        {% else %}
+          <p><strong>Deadline</strong><br>To be announced</p>
+        {% endif %}
+        <hr>
+        <p><strong>Participation</strong><br>{{ competition.get_participation_mode_display }}</p>
+        {% if competition.participation_mode != "individual" %}
+          <p><strong>Team size</strong><br>{{ competition.minimum_team_size }} minimum{% if competition.maximum_team_size %}, {{ competition.maximum_team_size }} maximum{% else %}, no maximum configured{% endif %}</p>
+        {% endif %}
+      </div>
+      <a class="competition-back-link" href="{% url 'competitions:list' %}">← Browse all six competitions</a>
+    </aside>
+  </div>
+{% endblock %}

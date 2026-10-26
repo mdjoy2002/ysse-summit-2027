@@ -1,0 +1,148 @@
+{% extends "dashboard/base.html" %}
+{% load admin_list %}
+
+{% block title %}{{ model_name }} | YSSE Summit 2027{% endblock %}
+{% block dashboard_title %}{{ model_name }}{% endblock %}
+{% block dashboard_content %}
+  <section class="dashboard-welcome">
+    <div>
+      <p class="dashboard-section-kicker">Record explorer</p>
+      <h2>{{ model_name }}</h2>
+      {% if changelist %}
+        <p>{{ changelist.result_count }} matching record{{ changelist.result_count|pluralize }}{% if changelist.show_full_result_count and changelist.result_count != changelist.full_result_count %} of {{ changelist.full_result_count }} total{% endif %}. Search, filters, columns and sorting follow this section's management configuration.</p>
+      {% else %}
+        <p>Search and browse records available to your account.</p>
+      {% endif %}
+    </div>
+    <div class="dashboard-record-actions">
+      {% if can_add %}<a class="dashboard-primary-link" href="{% url 'dashboard:records_create' changelist.opts.app_label changelist.opts.model_name %}">Add {{ model_name|slice:":-1" }}</a>{% endif %}
+      <a class="dashboard-secondary-link" href="{% url 'dashboard:records_index' %}">All sections</a>
+    </div>
+  </section>
+
+  {% if invalid_lookup %}
+    <section class="dashboard-empty-state" role="alert">
+      <h2>That filter could not be applied</h2>
+      <p>Check the search or filter values and try again.</p>
+    </section>
+  {% elif changelist %}
+    <section class="dashboard-panel dashboard-record-results">
+      <form class="dashboard-record-search" method="get" role="search">
+        <label for="record-search">Search {{ model_name|lower }}</label>
+        <div class="dashboard-record-search-controls">
+          <input id="record-search" type="search" name="{{ changelist.search_var }}" value="{{ changelist.query }}" placeholder="Search records">
+          <button class="dashboard-primary-link" type="submit">Search records</button>
+          {% if changelist.query %}<a class="dashboard-reset-link" href="?">Clear search</a>{% endif %}
+        </div>
+      </form>
+
+      {% if changelist.has_filters %}
+        <div class="dashboard-record-filters" aria-label="Record filters">
+          {% for spec in changelist.filter_specs %}
+            {% admin_list_filter changelist spec %}
+          {% endfor %}
+        </div>
+      {% endif %}
+      {% if changelist.date_hierarchy %}{% date_hierarchy changelist %}{% endif %}
+
+      {% if has_actions or can_edit_list %}
+        <form class="dashboard-bulk-actions" method="post">
+          {% csrf_token %}
+          {% if list_editable_formset %}
+            {{ list_editable_formset.management_form }}
+            {% for editable_form in list_editable_formset.forms %}
+              {% for hidden in editable_form.hidden_fields %}{{ hidden }}{% endfor %}
+              {{ editable_form.non_field_errors }}
+            {% endfor %}
+          {% endif %}
+          <input type="hidden" name="index" value="0">
+          <input type="hidden" name="select_across" value="0">
+          {% if has_actions %}
+            <label for="dashboard-action">With selected records</label>
+            <select id="dashboard-action" name="action">
+              {% for value, label in action_choices %}<option value="{{ value }}">{{ label }}</option>{% endfor %}
+            </select>
+            <button class="dashboard-secondary-link" type="submit">Run action</button>
+          {% endif %}
+          <div class="dashboard-record-table">
+            <table class="dashboard-managed-table">
+              <thead>
+                <tr>
+                  {% if has_actions %}<th scope="col"><span class="visually-hidden">Select</span></th>{% endif %}
+                  {% for header in record_headers %}
+                    <th scope="col"{{ header.class_attrib }}>
+                      {% if header.sortable %}<a href="{{ header.url_primary }}">{{ header.text|capfirst }}</a>{% else %}{{ header.text|capfirst }}{% endif %}
+                    </th>
+                  {% endfor %}
+                  <th scope="col">Manage</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for row in record_rows %}
+                  <tr>
+                    {% if has_actions %}<td><input type="checkbox" name="_selected_action" value="{{ row.object.pk }}" aria-label="Select {{ row.object }}"></td>{% endif %}
+                    {% for cell in row.cells %}
+                      <td>
+                        {% if cell.bound_field %}
+                          {{ cell.bound_field }}
+                          {{ cell.bound_field.errors }}
+                        {% else %}
+                          {{ cell }}
+                        {% endif %}
+                      </td>
+                    {% endfor %}
+                    <td class="dashboard-managed-actions">
+                      <a class="dashboard-record-view" href="{{ row.url }}">View</a>
+                      {% if row.can_change %}<a class="dashboard-record-view" href="{{ row.edit_url }}">Edit</a>{% endif %}
+                      {% if row.can_delete %}<a class="dashboard-record-view is-danger" href="{% url 'dashboard:records_delete' changelist.opts.app_label changelist.opts.model_name row.object.pk %}">Delete</a>{% endif %}
+                    </td>
+                  </tr>
+                {% empty %}
+                  <tr><td class="dashboard-table-empty" colspan="{{ record_headers|length|add:2 }}">No records match this search or filter.</td></tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% if can_edit_list %}<button class="dashboard-primary-link" type="submit" name="_save" value="Save">Save inline changes</button>{% endif %}
+        </form>
+      {% else %}
+      <div class="dashboard-record-table">
+        <table class="dashboard-managed-table">
+          <thead>
+            <tr>
+              {% for header in record_headers %}
+                <th scope="col"{{ header.class_attrib }}>
+                  {% if header.sortable %}<a href="{{ header.url_primary }}">{{ header.text|capfirst }}</a>{% else %}{{ header.text|capfirst }}{% endif %}
+                </th>
+              {% endfor %}
+              <th scope="col">Manage</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in record_rows %}
+              <tr>
+                {% for cell in row.cells %}<td>{{ cell }}</td>{% endfor %}
+                <td class="dashboard-managed-actions">
+                  <a class="dashboard-record-view" href="{{ row.url }}">View</a>
+                  {% if row.can_change %}<a class="dashboard-record-view" href="{{ row.edit_url }}">Edit</a>{% endif %}
+                </td>
+              </tr>
+            {% empty %}
+              <tr><td class="dashboard-table-empty" colspan="{{ record_headers|length|add:1 }}">No records match this search or filter.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% endif %}
+
+      {% if changelist.multi_page %}
+        <nav class="dashboard-pagination" aria-label="Record pages">
+          {% if previous_url %}<a href="{{ previous_url }}">Previous</a>{% endif %}
+          <span>Page {{ changelist.page_num|add:"1" }} of {{ changelist.paginator.num_pages }}</span>
+          {% if next_url %}<a href="{{ next_url }}">Next</a>{% endif %}
+        </nav>
+      {% endif %}
+      <p class="dashboard-record-note">Record details open inside Admin Panel 2. Your account's existing permissions still apply.</p>
+    </section>
+  {% endif %}
+{% endblock %}

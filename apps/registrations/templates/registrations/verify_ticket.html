@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Ticket Verification | YSSE Summit 2027{% endblock %}
+{% block styles %}<link rel="stylesheet" href="{% static 'registrations/css/registrations.css' %}">{% endblock %}
+
+{% block content %}
+  <section class="registration-section">
+    <div class="registration-shell registration-result">
+      <p class="registration-kicker">Staff-only entry verification</p>
+      {% if ticket_valid %}
+        <h1 class="verification-valid">Ticket valid</h1>
+      {% else %}
+        <h1 class="verification-invalid">Ticket invalid</h1>
+      {% endif %}
+      <p>Reference: <strong>{{ registration.ticket_reference }}</strong></p>
+      {% if ticket_valid %}
+        <p>{{ registration.full_name }} · {{ registration.pass_name_snapshot }}</p>
+        <p>{{ registration.event.event_title }} · {{ registration.event.event_start_at|date:"F j, Y" }}</p>
+      {% endif %}
+    </div>
+  </section>
+{% endblock %}

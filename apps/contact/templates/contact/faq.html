@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}FAQs | YSSE Summit 2027{% endblock %}
+{% block styles %}<link rel="stylesheet" href="{% static 'contact/css/contact.css' %}">{% endblock %}
+
+{% block content %}
+  <section class="info-hero">
+    <div class="info-shell">
+      <p class="info-eyebrow">Helpful information</p>
+      <h1>Frequently asked questions</h1>
+      <p>Answers published by the Summit team.</p>
+    </div>
+  </section>
+  <section class="info-section">
+    <div class="info-shell faq-list">
+      {% for faq in faqs %}
+        <details class="info-card faq-item">
+          <summary>{{ faq.question }}</summary>
+          <p class="faq-category">{{ faq.get_category_display }}</p>
+          <div class="rich-copy">{{ faq.answer|linebreaks }}</div>
+        </details>
+      {% empty %}
+        <div class="info-card info-empty">
+          <h2>FAQs are being prepared</h2>
+          <p>Published answers will appear here when they are ready.</p>
+        </div>
+      {% endfor %}
+    </div>
+  </section>
+{% endblock %}

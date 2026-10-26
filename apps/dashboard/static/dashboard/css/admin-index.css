@@ -1,0 +1,55 @@
+.admin-panel-two {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin: 0 0 1.4rem;
+  padding: 1.2rem 1.4rem;
+  border: 1px solid #c8dcc8;
+  border-left: 5px solid #789c42;
+  border-radius: 0.55rem;
+  background: linear-gradient(110deg, #f4f9ec, #fff);
+}
+
+.admin-panel-two p {
+  margin: 0 0 0.25rem;
+  color: #526c44;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.admin-panel-two h2 {
+  margin: 0;
+  color: #173a2a;
+  font-size: 1.25rem;
+}
+
+.admin-panel-two span {
+  color: #65756b;
+  font-size: 0.8rem;
+}
+
+.admin-panel-two a {
+  display: inline-block;
+  padding: 0.65rem 0.9rem;
+  border-radius: 0.45rem;
+  color: #fff;
+  background: #18523a;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.admin-panel-two a:hover {
+  background: #103d2b;
+}
+
+@media (max-width: 560px) {
+  .admin-panel-two {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.9rem;
+  }
+}

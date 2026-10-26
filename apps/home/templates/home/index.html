@@ -1,0 +1,206 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ event.event_title }} | YSSE{% endblock %}
+{% block meta_description %}{{ event.subtitle }} Join young changemakers at the YSSE Social Entrepreneurship Summit 2027.{% endblock %}
+{% block styles %}<link rel="stylesheet" href="{% static 'home/css/home.css' %}">{% endblock %}
+
+{% block content %}
+  <section
+    class="hero"
+    id="about"
+    aria-labelledby="hero-title"
+  >
+    {% if event.hero_video_url %}
+      <video class="hero-video" autoplay muted loop playsinline {% if event.hero_poster %}poster="{{ event.hero_poster.url }}"{% endif %} aria-hidden="true">
+        <source src="{{ event.hero_video_url }}">
+      </video>
+    {% elif event.hero_poster %}
+      <img class="hero-poster" src="{{ event.hero_poster.url }}" alt="" fetchpriority="high">
+    {% endif %}
+    <div class="hero-scrim" aria-hidden="true"></div>
+    <div class="hero-content page-shell">
+      <div class="hero-copy">
+        <p class="eyebrow"><span class="eyebrow-dot"></span> Bangladesh's gathering for changemakers</p>
+        <h1 id="hero-title">{{ event.event_title }}</h1>
+        <p class="hero-subtitle">{{ event.subtitle }}</p>
+        <p class="legacy-note"><span aria-hidden="true">✳</span> {{ event.legacy_message }}</p>
+        {% if event.venue %}<p class="hero-venue"><span aria-hidden="true">⌖</span> {{ event.venue }}</p>{% endif %}
+        <div class="hero-actions">
+          {% if event.registration_available %}
+            <a class="button button-primary" href="{{ registration_url }}">{{ event.register_cta_text }} <span aria-hidden="true">↗</span></a>
+          {% else %}
+            <span class="button button-primary button-disabled" aria-disabled="true">Registration is not open yet</span>
+          {% endif %}
+          <a class="button button-outline" href="{{ event.explore_cta_url }}">{{ event.explore_cta_text }} <span aria-hidden="true">↓</span></a>
+        </div>
+      </div>
+      <aside class="countdown-card" aria-label="Countdown to summit">
+        <p class="countdown-kicker">The countdown is on</p>
+        <h2>See you at the summit</h2>
+        <div
+          class="countdown"
+          data-countdown
+          data-event-start="{{ event.event_start_at|date:'c' }}"
+          data-expired-text="The summit has started."
+          aria-live="off"
+        >
+          <div class="countdown-unit"><span data-unit="days">00</span><small>Days</small></div>
+          <span class="countdown-divider" aria-hidden="true">:</span>
+          <div class="countdown-unit"><span data-unit="hours">00</span><small>Hours</small></div>
+          <span class="countdown-divider" aria-hidden="true">:</span>
+          <div class="countdown-unit"><span data-unit="minutes">00</span><small>Minutes</small></div>
+          <span class="countdown-divider" aria-hidden="true">:</span>
+          <div class="countdown-unit"><span data-unit="seconds">00</span><small>Seconds</small></div>
+        </div>
+        <p class="countdown-date"><span aria-hidden="true">◷</span> {{ event.event_start_at|date:"l, F j, Y · g:i A" }} Bangladesh time</p>
+        <p class="countdown-expired" data-countdown-expired hidden></p>
+      </aside>
+    </div>
+    <a class="hero-scroll" href="#highlights"><span aria-hidden="true">↓</span> Discover the summit</a>
+  </section>
+
+  <section class="section highlights-section" id="highlights" aria-labelledby="highlights-title">
+    <div class="page-shell">
+      <div class="section-heading">
+        <div>
+          <p class="section-kicker">One day. A movement for change.</p>
+          <h2 id="highlights-title">The summit, <em>at a glance.</em></h2>
+        </div>
+        <p class="section-intro">A national platform where purpose meets possibility—and ideas turn into action.</p>
+      </div>
+      {% if highlights %}
+        <div class="highlight-grid">
+          {% for highlight in highlights %}
+            {% include "home/partials/highlight_card.html" with item=highlight %}
+          {% endfor %}
+        </div>
+      {% else %}
+        <p class="empty-note">Summit highlights will be announced soon.</p>
+      {% endif %}
+    </div>
+  </section>
+
+  <section class="legacy-section" aria-label="YSSE legacy">
+    <div class="page-shell legacy-inner">
+      <div class="legacy-number" aria-hidden="true">12<span>years</span></div>
+      <div>
+        <p class="section-kicker">A dozen years of doing good, differently</p>
+        <h2>Young people can build a more inclusive future.</h2>
+        <p>For twelve years, YSSE has helped young people turn social challenges into bold, sustainable ideas. The summit brings that community together to imagine what comes next.</p>
+      </div>
+      <a class="text-link" href="#registration">Be part of the next chapter <span aria-hidden="true">↗</span></a>
+    </div>
+  </section>
+
+  <section class="section speakers-section" id="speakers" aria-labelledby="speakers-title">
+    <div class="page-shell">
+      <div class="section-heading">
+        <div>
+          <p class="section-kicker">The people shaping change</p>
+          <h2 id="speakers-title">Meet the <em>voices of change.</em></h2>
+        </div>
+        <p class="section-intro">Explore the summit’s published speaker profiles and check each person’s participation status.</p>
+      </div>
+      {% if featured_speakers %}
+        <div class="speaker-grid">
+          {% for speaker in featured_speakers %}
+            <article class="speaker-card">
+              <div class="speaker-photo">
+                {% if speaker.profile_image %}
+                  <img src="{{ speaker.profile_image.url }}" alt="Portrait of {{ speaker.full_name }}" loading="lazy">
+                {% else %}
+                  <span class="speaker-initial" aria-hidden="true">{{ speaker.full_name|first }}</span>
+                  <span class="visually-hidden">No profile image available</span>
+                {% endif %}
+                <span class="speaker-photo-label">Summit 2027</span>
+              </div>
+              <div class="speaker-info">
+                <h3><a href="{% url 'speakers:detail' speaker.slug %}">{{ speaker.full_name }}</a></h3>
+                <p class="speaker-role">{{ speaker.official_designation }}</p>
+                <p class="speaker-organization">{{ speaker.organization }}</p>
+                <p class="speaker-bio">{{ speaker.biography }}</p>
+                {% if speaker.participation_status == "confirmed" %}
+                  <span class="speaker-confirmation">Participation confirmed</span>
+                {% else %}
+                  <span class="speaker-confirmation speaker-confirmation-pending">Participation not confirmed</span>
+                {% endif %}
+              </div>
+            </article>
+          {% endfor %}
+        </div>
+        <div class="center-action"><a class="button button-dark" href="{% url 'speakers:list' %}">View All Speakers <span aria-hidden="true">→</span></a></div>
+      {% else %}
+        <div class="empty-state">
+          <span class="empty-state-mark" aria-hidden="true">✳</span>
+          <h3>Big ideas are taking shape.</h3>
+          <p>Our featured speakers will be announced soon. Check back for updates.</p>
+        </div>
+      {% endif %}
+    </div>
+  </section>
+
+  <section class="news-section section" id="news" aria-labelledby="news-title">
+    <div class="page-shell">
+      <div class="section-heading">
+        <div>
+          <p class="section-kicker">From the summit desk</p>
+          <h2 id="news-title">The latest <em>from YSSE.</em></h2>
+        </div>
+        <p class="section-intro">Announcements, milestones and stories from our growing community.</p>
+      </div>
+      {% if announcements %}
+        <div class="news-grid">
+          {% for announcement in announcements %}
+            <article class="news-card">
+              {% if announcement.image %}
+                <div class="news-image"><img src="{{ announcement.image.url }}" alt="" loading="lazy"></div>
+              {% else %}
+                <div class="news-image news-image-placeholder" aria-hidden="true"><span>YSSE <b>·</b> 2027</span></div>
+              {% endif %}
+              <div class="news-info">
+                <p class="news-date">{{ announcement.published_at|date:"M j, Y" }}</p>
+                <h3>
+                  {% if announcement.destination_url %}
+                    <a href="{{ announcement.destination_url }}" target="_blank" rel="noopener noreferrer">{{ announcement.title }}</a>
+                  {% else %}
+                    {{ announcement.title }}
+                  {% endif %}
+                </h3>
+                <p>{{ announcement.summary }}</p>
+                {% if announcement.destination_url %}<a class="news-link" href="{{ announcement.destination_url }}" target="_blank" rel="noopener noreferrer">Read announcement <span aria-hidden="true">↗</span></a>{% endif %}
+              </div>
+            </article>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="empty-state empty-state-news">
+          <span class="empty-state-mark" aria-hidden="true">✦</span>
+          <h3>Good things are on the way.</h3>
+          <p>There are no public updates just yet. New summit announcements will appear here.</p>
+        </div>
+      {% endif %}
+    </div>
+  </section>
+
+  <section class="registration-section" id="registration" aria-labelledby="registration-title">
+    <div class="page-shell registration-card">
+      <div>
+        <p class="section-kicker">Your next big idea belongs here</p>
+        <h2 id="registration-title">Ready to shape what comes next?</h2>
+        {% if event.registration_available %}
+          <p>Registration details are on their way. Keep an eye on this space for the latest.</p>
+        {% else %}
+          <p>Registration is not open yet. Please check back for availability updates.</p>
+        {% endif %}
+      </div>
+      {% if event.registration_available %}
+        <a class="button button-primary" href="{{ registration_url }}">{{ event.register_cta_text }} <span aria-hidden="true">↗</span></a>
+      {% else %}
+        <span class="button button-primary button-disabled" aria-disabled="true">Registration is not open yet</span>
+      {% endif %}
+    </div>
+  </section>
+{% endblock %}
+
+{% block scripts %}<script src="{% static 'home/js/countdown.js' %}" defer></script>{% endblock %}

@@ -1,0 +1,386 @@
+.registration-hero {
+  padding: clamp(4rem, 9vw, 7rem) 1.25rem;
+  color: #f7f5ee;
+  background: radial-gradient(ellipse at 82% 20%, #28644f 0, transparent 35%), #08251d;
+}
+
+.registration-shell {
+  width: min(1120px, 100%);
+  margin: 0 auto;
+}
+
+.registration-hero h1,
+.registration-section h1 {
+  max-width: 800px;
+  margin: .35rem 0 1rem;
+  font-size: clamp(2.5rem, 6vw, 5rem);
+  line-height: 1.03;
+  letter-spacing: -.045em;
+}
+
+.registration-hero h1 em {
+  color: #d5b36a;
+  font-family: Georgia, serif;
+  font-weight: 400;
+}
+
+.registration-hero p,
+.registration-section p {
+  line-height: 1.7;
+}
+
+.registration-kicker {
+  color: #bd9753;
+  font-size: .76rem;
+  font-weight: 800;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+
+.registration-section {
+  padding: clamp(3.5rem, 7vw, 6rem) 1.25rem;
+  background: #f7f5ee;
+  color: #18332a;
+}
+
+.registration-section-heading {
+  max-width: 700px;
+  margin-bottom: 2rem;
+}
+
+.registration-section-heading h2 {
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  letter-spacing: -.035em;
+}
+
+.pass-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+  gap: 1.25rem;
+}
+
+.pass-card,
+.registration-result,
+.history-card,
+.ticket-card {
+  padding: clamp(1.25rem, 3vw, 2rem);
+  border: 1px solid #e2dfd3;
+  border-radius: 1rem;
+  background: #fffefa;
+  box-shadow: 0 1rem 2.5rem rgb(8 37 29 / 6%);
+}
+
+.pass-card h3 {
+  margin: .35rem 0;
+  font-size: 1.6rem;
+}
+
+.pass-label {
+  margin: 0;
+  color: #8e6d31;
+  font-size: .76rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.pass-price {
+  margin: 1.25rem 0;
+  color: #164532;
+  font-size: 1.65rem;
+  font-weight: 800;
+}
+
+.pass-card h4 {
+  margin-bottom: .6rem;
+}
+
+.pass-card ul,
+.ticket-card ul {
+  padding-left: 1.2rem;
+  line-height: 1.8;
+}
+
+.registration-button {
+  display: inline-flex;
+  min-height: 48px;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  margin-top: 1rem;
+  padding: .75rem 1.1rem;
+  border: 0;
+  border-radius: 999px;
+  background: #13553d;
+  color: #fff;
+  font: inherit;
+  font-weight: 750;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.registration-button:hover,
+.registration-button:focus-visible {
+  background: #0b3e2d;
+}
+
+.registration-notice {
+  padding: 1rem 1.2rem;
+  border-left: 4px solid #bd9753;
+  border-radius: .4rem;
+  background: #f0ecdf;
+}
+
+.registration-privacy {
+  margin-top: 2rem;
+  color: #50625b;
+  font-size: .9rem;
+}
+
+.registration-form-shell,
+.registration-result {
+  max-width: 760px;
+}
+
+.registration-form {
+  display: grid;
+  gap: 1.2rem;
+  margin-top: 2rem;
+}
+
+.registration-field label:not(.registration-consent) {
+  display: block;
+  margin-bottom: .4rem;
+  font-weight: 700;
+}
+
+.registration-field input:not([type="checkbox"]),
+.registration-field select {
+  width: 100%;
+  min-height: 48px;
+  padding: .7rem .8rem;
+  border: 1px solid #9caa9f;
+  border-radius: .5rem;
+  background: white;
+  color: #18332a;
+  font: inherit;
+}
+
+.registration-consent {
+  display: flex;
+  align-items: flex-start;
+  gap: .65rem;
+  line-height: 1.5;
+}
+
+.registration-consent input {
+  width: 1.1rem;
+  height: 1.1rem;
+  margin-top: .2rem;
+}
+
+.field-error,
+.form-errors {
+  color: #9c241d;
+}
+
+.form-errors {
+  padding: .8rem;
+  border: 1px solid #d9a09a;
+  border-radius: .5rem;
+  background: #fff1ef;
+}
+
+.form-errors ul {
+  margin: 0;
+}
+
+.registration-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+  gap: 1rem;
+  margin: 2rem 0;
+}
+
+.registration-summary div {
+  padding: .85rem;
+  border-radius: .6rem;
+  background: #f0eee5;
+  overflow-wrap: anywhere;
+}
+
+.registration-summary dt {
+  color: #59675f;
+  font-size: .8rem;
+  font-weight: 700;
+}
+
+.registration-summary dd {
+  margin: .25rem 0 0;
+  font-weight: 700;
+}
+
+.payment-panel {
+  margin: 2rem 0;
+  padding: clamp(1rem, 3vw, 1.5rem);
+  border: 1px solid #d6ddcf;
+  border-radius: .9rem;
+  background: #f4f5ef;
+}
+
+.payment-panel-heading h2 {
+  margin: .25rem 0;
+  font-size: clamp(1.35rem, 3vw, 1.8rem);
+}
+
+.payment-panel-heading > p:last-child {
+  margin-bottom: 1rem;
+}
+
+.payment-method-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr));
+  gap: .65rem;
+  margin: 1rem 0;
+  padding: 0;
+  list-style: none;
+}
+
+.payment-method {
+  display: flex;
+  min-height: 54px;
+  align-items: center;
+  justify-content: space-between;
+  gap: .5rem;
+  padding: .7rem .85rem;
+  border: 1px solid #d7ded5;
+  border-radius: .6rem;
+  background: #fffefa;
+  font-weight: 700;
+}
+
+.payment-method-status {
+  color: #68736d;
+  font-size: .75rem;
+  font-weight: 700;
+  text-align: right;
+}
+
+.payment-method.is-available .payment-method-status {
+  color: #13553d;
+}
+
+.payment-unavailable-note,
+.payment-security-note {
+  margin: 1rem 0 0;
+  padding: .85rem 1rem;
+  border-left: 4px solid #bd9753;
+  border-radius: .35rem;
+  background: #fffefa;
+  color: #46564d;
+  font-size: .92rem;
+}
+
+.payment-checkout-form {
+  display: grid;
+  max-width: 440px;
+  gap: .55rem;
+  margin-top: 1.25rem;
+}
+
+.payment-checkout-form select {
+  min-height: 48px;
+  padding: .65rem .8rem;
+  border: 1px solid #9caa9f;
+  border-radius: .5rem;
+  background: white;
+  color: #18332a;
+  font: inherit;
+}
+
+.registration-text-link {
+  display: inline-block;
+  margin: 1rem;
+  color: #13553d;
+  font-weight: 700;
+}
+
+.history-list {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.history-card {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.history-card h2 {
+  margin-bottom: .2rem;
+}
+
+.ticket-card {
+  max-width: 800px;
+  border-top: 8px solid #13553d;
+}
+
+.ticket-card h1 {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+}
+
+.ticket-state,
+.verification-valid {
+  color: #176c3e;
+  font-weight: 800;
+}
+
+.ticket-invalid,
+.verification-invalid {
+  color: #a12720;
+  font-weight: 800;
+}
+
+.ticket-reference {
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 1.1rem;
+  letter-spacing: .04em;
+}
+
+@media print {
+  .site-header,
+  .site-messages,
+  .site-footer,
+  .print-button,
+  .registration-privacy {
+    display: none !important;
+  }
+
+  .registration-section {
+    padding: 0;
+    background: white;
+  }
+
+  .ticket-card {
+    width: 100%;
+    max-width: none;
+    border: 2px solid #13553d;
+    box-shadow: none;
+  }
+}
+
+@media (max-width: 600px) {
+  .registration-hero,
+  .registration-section {
+    padding-right: 1rem;
+    padding-left: 1rem;
+  }
+
+  .history-card {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

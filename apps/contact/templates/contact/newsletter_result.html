@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Newsletter | YSSE Summit 2027{% endblock %}
+{% block styles %}<link rel="stylesheet" href="{% static 'contact/css/contact.css' %}">{% endblock %}
+
+{% block content %}
+  <section class="info-section">
+    <div class="info-shell">
+      <div class="info-card newsletter-result">
+        <p class="info-eyebrow">Summit updates</p>
+        <h1>Newsletter preferences</h1>
+        <p>For new subscriptions, check your inbox and confirm your email address. You can unsubscribe using the private link in your email.</p>
+        <a class="info-button" href="{% url 'home:index' %}">Return to the homepage</a>
+      </div>
+    </div>
+  </section>
+{% endblock %}

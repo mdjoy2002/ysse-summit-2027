@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Passes & Registration | YSSE Summit 2027{% endblock %}
+{% block meta_description %}Explore configurable passes and register for the YSSE Social Entrepreneurship Summit 2027.{% endblock %}
+{% block styles %}<link rel="stylesheet" href="{% static 'registrations/css/registrations.css' %}">{% endblock %}
+
+{% block content %}
+  <section class="registration-hero">
+    <div class="registration-shell">
+      <p class="registration-kicker">Be part of the movement</p>
+      <h1>Choose your <em>summit pass.</em></h1>
+      <p>{{ event.event_title }} · {{ event.event_start_at|date:"F j, Y" }} · Bangladesh time</p>
+      {% if event.venue %}<p>{{ event.venue }}</p>{% endif %}
+    </div>
+  </section>
+  <section class="registration-section" aria-labelledby="pass-heading">
+    <div class="registration-shell">
+      <div class="registration-section-heading">
+        <p class="registration-kicker">Pass options</p>
+        <h2 id="pass-heading">A place at the summit for every changemaker.</h2>
+        <p>Pass details and included benefits are managed by the summit team. Final prices are shown only after organizer confirmation.</p>
+      </div>
+      {% if not registration_open %}
+        <p class="registration-notice" role="status">Registration is currently closed. Please check back for updates.</p>
+      {% elif passes %}
+        <div class="pass-grid">
+          {% for pass_type in passes %}
+            <article class="pass-card">
+              <p class="pass-label">{{ pass_type.get_category_display }}</p>
+              <h3>{{ pass_type.name }}</h3>
+              {% if pass_type.description %}<p>{{ pass_type.description }}</p>{% endif %}
+              <p class="pass-price">৳ {{ pass_type.price|floatformat:2 }}</p>
+              <h4>Included benefits</h4>
+              {% if pass_type.benefits %}
+                <ul>{% for benefit in pass_type.benefits %}<li>{{ benefit }}</li>{% endfor %}</ul>
+              {% else %}
+                <p>Benefits are being confirmed by the summit team.</p>
+              {% endif %}
+              <a class="registration-button" href="{% url 'registrations:new' %}?pass={{ pass_type.pk }}">Register with this pass <span aria-hidden="true">↗</span></a>
+            </article>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p class="registration-notice" role="status">Pass prices and availability are awaiting organizer confirmation. No ticket is currently available to purchase.</p>
+      {% endif %}
+      <p class="registration-privacy">Only the details needed to administer your summit registration are collected. A pending status is never proof of payment. {% if demo_payment_mode %}Local development uses simulated checkout only; no real payment is made.{% else %}Payments require an approved configured provider.{% endif %}</p>
+    </div>
+  </section>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#08251d">
+    <title>{% block title %}YSSE Social Entrepreneurship Summit 2027{% endblock %}</title>
+    <meta name="description" content="{% block meta_description %}A national gathering for young changemakers, social entrepreneurs, and the future of social business.{% endblock %}">
+    <link rel="icon" type="image/png" href="{% static 'images/ysse-logo.png' %}">
+    <link rel="stylesheet" href="{% static 'css/site.css' %}">
+    {% block styles %}{% endblock %}
+  </head>
+  <body>
+    {% include "partials/navbar.html" %}
+    <main id="main-content">
+      {% if messages %}
+        <div class="site-messages" aria-label="Notifications">
+          {% for message in messages %}
+            <p class="site-message site-message-{{ message.tags }}" role="{% if message.tags == 'error' %}alert{% else %}status{% endif %}">{{ message }}</p>
+          {% endfor %}
+        </div>
+      {% endif %}
+      {% block content %}{% endblock %}
+    </main>
+    {% include "partials/footer.html" %}
+    {% block scripts %}{% endblock %}
+  </body>
+</html>

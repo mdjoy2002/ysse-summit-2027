@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block title %}404 · Page Not Found | YSSE{% endblock %}
+{% block content %}
+  <section class="error-page" aria-labelledby="error-title">
+    <p class="error-code" aria-hidden="true">404</p>
+    <h1 id="error-title">Page Not Found</h1>
+    <p>The URL might be incorrect, or the page may have been removed.</p>
+    <a class="error-home-link" href="{% url 'home:index' %}">Back to Home</a>
+  </section>
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{% if is_editing %}Edit{% else %}Submit{% endif %} {{ competition.name }} | YSSE{% endblock %}
+{% block styles %}<link rel="stylesheet" href="{% static 'competitions/css/competitions.css' %}">{% endblock %}
+
+{% block content %}
+  <section class="competition-form-section">
+    <div class="competition-form-shell">
+      <a class="competition-back-link" href="{% url 'competitions:detail' competition.slug %}">← Back to competition</a>
+      <p class="competition-kicker">{% if is_editing %}Update your entry{% else %}Participant submission{% endif %}</p>
+      <h1>{{ competition.name }}</h1>
+      {% if submission %}
+        <p class="competition-muted">Reference {{ submission.reference }} · Current state: {{ submission.get_status_display }}</p>
+      {% endif %}
+      <p class="competition-form-intro">Save a draft to finish later, or submit your completed entry. Your submission is private and visible only to you and authorized competition reviewers.</p>
+      <form method="post" enctype="multipart/form-data" class="competition-form">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        {% for field in form %}
+          <div class="competition-form-field{% if field.errors %} has-errors{% endif %}">
+            {{ field.label_tag }}
+            {{ field }}
+            {% if field.help_text %}<small>{{ field.help_text }}</small>{% endif %}
+            {% for error in field.errors %}<span class="competition-field-error">{{ error }}</span>{% endfor %}
+          </div>
+        {% endfor %}
+        {% if submission.attachment %}
+          <p class="competition-existing-file">Current file: <a href="{% url 'competitions:submission-file' submission.reference %}">Download your private file</a>. Upload a replacement only if needed.</p>
+        {% endif %}
+        <div class="competition-form-actions">
+          <button class="competition-button competition-button-outline-dark" type="submit" name="action" value="draft">Save draft</button>
+          <button class="competition-button competition-button-primary" type="submit" name="action" value="submit">Submit entry <span aria-hidden="true">↗</span></button>
+        </div>
+      </form>
+    </div>
+  </section>
+{% endblock %}

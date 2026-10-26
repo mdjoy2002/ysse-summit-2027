@@ -1,0 +1,193 @@
+{% extends "base.html" %}
+{% load static tz %}
+
+{% block title %}{{ event.event_title }} | Summit Details{% endblock %}
+{% block meta_description %}{{ event.description|truncatewords:28 }}{% endblock %}
+{% block styles %}<link rel="stylesheet" href="{% static 'summit/css/summit.css' %}">{% endblock %}
+
+{% block content %}
+  <section class="summit-hero" aria-labelledby="summit-title">
+    {% if event.banner_image %}
+      <img class="summit-banner" src="{{ event.banner_image.url }}" alt="" fetchpriority="high">
+    {% endif %}
+    <div class="summit-hero-scrim" aria-hidden="true"></div>
+    <div class="summit-shell summit-hero-content">
+      <p class="summit-eyebrow"><span aria-hidden="true">✳</span> YSSE · SUMMIT</p>
+      <p class="summit-status summit-status-{{ event.status }}">{{ event.get_status_display }}</p>
+      <h1 id="summit-title">{{ event.event_title }}</h1>
+      {% if event.description %}
+        <p class="summit-intro">{{ event.description|linebreaksbr }}</p>
+      {% else %}
+        <p class="summit-intro">Summit information is being prepared. Please check back for updates.</p>
+      {% endif %}
+      <div class="summit-hero-actions">
+        {% if event.registration_available %}
+          <a class="summit-button summit-button-primary" href="{{ registration_url }}">
+            {{ event.register_cta_text }} <span aria-hidden="true">↗</span>
+          </a>
+        {% else %}
+          <span class="summit-button summit-button-disabled" aria-disabled="true">Registration is not open yet</span>
+        {% endif %}
+        <a class="summit-button summit-button-quiet" href="#event-information">Explore event details <span aria-hidden="true">↓</span></a>
+      </div>
+    </div>
+    <div class="summit-hero-mark" aria-hidden="true">YSSE<br><span>2027</span></div>
+  </section>
+
+  <section class="summit-section summit-theme-section" aria-labelledby="theme-title">
+    <div class="summit-shell summit-theme-layout">
+      <div class="summit-section-heading">
+        <p class="summit-kicker">A shared direction</p>
+        <h2 id="theme-title">The summit <em>theme.</em></h2>
+      </div>
+      <div class="summit-theme-card">
+        <span class="summit-theme-icon" aria-hidden="true">✳</span>
+        <h3>{{ event.theme }}</h3>
+        <p>Bringing the summit focus together around leadership, innovation, and meaningful long-term change.</p>
+      </div>
+    </div>
+    <div class="summit-shell summit-objectives">
+      <article class="summit-objective">
+        <span>01</span>
+        <h3>Support youth leadership</h3>
+        <p>Explore how young people can shape solutions to social challenges.</p>
+      </article>
+      <article class="summit-objective">
+        <span>02</span>
+        <h3>Advance social business innovation</h3>
+        <p>Exchange ideas for business models designed around social value.</p>
+      </article>
+      <article class="summit-objective">
+        <span>03</span>
+        <h3>Focus on sustainable impact</h3>
+        <p>Consider how initiatives can pursue enduring, responsible outcomes.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="summit-section summit-info-section" id="event-information" aria-labelledby="info-title">
+    <div class="summit-shell">
+      <div class="summit-section-heading summit-centered-heading">
+        <p class="summit-kicker">Plan your day</p>
+        <h2 id="info-title">The essential <em>details.</em></h2>
+      </div>
+      <div class="summit-info-grid">
+        <article class="summit-info-card">
+          <span class="summit-info-icon" aria-hidden="true">◷</span>
+          <p class="summit-info-label">Date</p>
+          <h3>{% timezone "Asia/Dhaka" %}{{ event.event_start_at|date:"l, F j, Y" }}{% endtimezone %}</h3>
+          <p>Planned summit date · Bangladesh time</p>
+        </article>
+        <article class="summit-info-card">
+          <span class="summit-info-icon" aria-hidden="true">⌚</span>
+          <p class="summit-info-label">Time</p>
+          <h3>{% timezone "Asia/Dhaka" %}{{ event.event_start_at|date:"g:i A" }} – {{ event.event_end_at|date:"g:i A" }}{% endtimezone %}</h3>
+          <p>Bangladesh Standard Time (UTC+6)</p>
+        </article>
+        <article class="summit-info-card">
+          <span class="summit-info-icon" aria-hidden="true">⌖</span>
+          <p class="summit-info-label">Venue</p>
+          {% if event.venue %}
+            <h3>{{ event.venue }}</h3>
+            <p>Current venue information · check for updates</p>
+          {% else %}
+            <h3>Venue to be announced</h3>
+            <p>The final venue will be shared when confirmed.</p>
+          {% endif %}
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="summit-section summit-why-section" aria-labelledby="why-title">
+    <div class="summit-shell summit-two-column">
+      <div class="summit-section-heading">
+        <p class="summit-kicker">Make the day count</p>
+        <h2 id="why-title">Why attend the <em>Summit?</em></h2>
+        <p>Be part of a conversation connecting youth leadership, social business innovation, and sustainable impact.</p>
+      </div>
+      <ul class="summit-benefits">
+        <li><span aria-hidden="true">↗</span><div><strong>Broaden your perspective</strong><p>Explore approaches to social business and impact-led work.</p></div></li>
+        <li><span aria-hidden="true">↗</span><div><strong>Meet people across the ecosystem</strong><p>Connect with peers, founders, policymakers, investors, and business leaders.</p></div></li>
+        <li><span aria-hidden="true">↗</span><div><strong>Bring ideas into the room</strong><p>Share questions and perspectives that can inform future collaboration.</p></div></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="summit-section summit-audience-section" aria-labelledby="audience-title">
+    <div class="summit-shell">
+      <div class="summit-section-heading">
+        <p class="summit-kicker">Who should join</p>
+        <h2 id="audience-title">For people building <em>what’s next.</em></h2>
+      </div>
+      <div class="summit-audience-grid">
+        <article><span aria-hidden="true">01</span><h3>University students &amp; young researchers</h3></article>
+        <article><span aria-hidden="true">02</span><h3>Social business founders &amp; early-stage startups</h3></article>
+        <article><span aria-hidden="true">03</span><h3>Policymakers &amp; diplomatic delegates</h3></article>
+        <article><span aria-hidden="true">04</span><h3>Impact investors &amp; corporate executives</h3></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="summit-section summit-activities-section" aria-labelledby="activities-title">
+    <div class="summit-shell summit-activities-layout">
+      <div class="summit-section-heading">
+        <p class="summit-kicker">A day of ideas and exchange</p>
+        <h2 id="activities-title">Expected areas of <em>activity.</em></h2>
+        <p>Program details will be shared as they are confirmed. The day is planned around the summit’s core themes.</p>
+      </div>
+      <div class="summit-activity-list">
+        <div><span>01</span><p>Conversations on youth leadership</p></div>
+        <div><span>02</span><p>Social business innovation and idea exchange</p></div>
+        <div><span>03</span><p>Discussion on sustainable impact</p></div>
+        <div><span>04</span><p>Networking across the social business ecosystem</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="summit-faq-section" aria-labelledby="faq-title">
+    <div class="summit-shell summit-faq-layout">
+      <div class="summit-section-heading">
+        <p class="summit-kicker">Good to know</p>
+        <h2 id="faq-title">Frequently asked <em>questions.</em></h2>
+      </div>
+      <div class="summit-faq-list">
+        <details>
+          <summary>When is the summit?</summary>
+          <p>The summit is planned for {% timezone "Asia/Dhaka" %}{{ event.event_start_at|date:"F j, Y" }}{% endtimezone %}, from {% timezone "Asia/Dhaka" %}{{ event.event_start_at|date:"g:i A" }} to {{ event.event_end_at|date:"g:i A" }}{% endtimezone %} Bangladesh time. Check this page for updates.</p>
+        </details>
+        <details>
+          <summary>Where will it take place?</summary>
+          {% if event.venue %}
+            <p>The currently listed venue is {{ event.venue }}. Please check this page for the latest details.</p>
+          {% else %}
+            <p>The final venue has not yet been announced. Please check this page for updates.</p>
+          {% endif %}
+        </details>
+        <details>
+          <summary>How can I register?</summary>
+          {% if event.registration_available %}
+            <p>Use the Register Now button on this page to continue to the registration information.</p>
+          {% else %}
+            <p>Registration is not open yet. Please check back for availability updates.</p>
+          {% endif %}
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <section class="summit-register-section" aria-labelledby="register-title">
+    <div class="summit-shell summit-register-card">
+      <div>
+        <p class="summit-kicker">{{ event.event_title }}</p>
+        <h2 id="register-title">Be part of the <em>conversation.</em></h2>
+        <p>Join a day focused on youth leadership, social business innovation, and sustainable impact.</p>
+      </div>
+      {% if event.registration_available %}
+        <a class="summit-button summit-button-primary" href="{{ registration_url }}">{{ event.register_cta_text }} <span aria-hidden="true">↗</span></a>
+      {% else %}
+        <span class="summit-button summit-button-disabled" aria-disabled="true">Registration is not open yet</span>
+      {% endif %}
+    </div>
+  </section>
+{% endblock %}

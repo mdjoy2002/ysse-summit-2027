@@ -1,0 +1,98 @@
+{% load static %}
+<footer class="site-footer">
+  <div class="footer-shell">
+    <a class="brand brand-footer" href="{% url 'home:index' %}">
+      <img class="brand-logo" src="{% static 'images/ysse-logo.png' %}" alt="YSSE">
+      <span class="brand-copy"><small>SUMMIT 2027</small></span>
+    </a>
+    <p>Ideas for a better world. Business for a lasting impact.</p>
+    <a class="back-to-top" href="#main-content">Back to top ↑</a>
+  </div>
+  <div class="footer-links-shell">
+    <div class="footer-links-grid">
+      <section aria-labelledby="footer-navigation-title">
+        <h2 id="footer-navigation-title">Explore</h2>
+        <a href="{% url 'about:index' %}">About YSSE</a>
+        <a href="{% url 'summit:index' %}">Summit details</a>
+        <a href="{% url 'schedule:index' %}">Event schedule</a>
+        <a href="{% url 'competitions:list' %}">Competitions</a>
+        <a href="{% url 'partners:index' %}">Partners and sponsors</a>
+        <a href="{% url 'registrations:passes' %}">Registration</a>
+      </section>
+      <section aria-labelledby="footer-information-title">
+        <h2 id="footer-information-title">Information</h2>
+        <a href="{% url 'contact:faq' %}">FAQ</a>
+        <a href="{% url 'contact:privacy' %}">Privacy Policy</a>
+        <a href="{% url 'contact:terms' %}">Terms and Conditions</a>
+        <a href="{% url 'contact:press-list' %}">Press Releases</a>
+        <a href="{% url 'contact:contact' %}">Contact</a>
+      </section>
+      <section aria-labelledby="footer-contact-title">
+        <h2 id="footer-contact-title">Official contact</h2>
+        <a href="mailto:{% if public_information %}{{ public_information.official_email }}{% else %}ysse.hrd@gmail.com{% endif %}">{% if public_information %}{{ public_information.official_email }}{% else %}ysse.hrd@gmail.com{% endif %}</a>
+        {% if public_information and public_information.hotline_numbers %}<p>Hotline: {{ public_information.hotline_numbers }}</p>{% endif %}
+        {% if public_information and public_information.office_address %}<p>{{ public_information.office_address }}</p>{% endif %}
+        {% if public_information and public_information.social_links %}
+          <div class="footer-social-links" aria-label="Official social media">
+            {% for label, url in public_information.social_links %}
+              <a href="{{ url }}" target="_blank" rel="noopener noreferrer">{{ label }}</a>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </section>
+      <section aria-labelledby="footer-newsletter-title">
+        <h2 id="footer-newsletter-title">Summit newsletter</h2>
+        <p>Get occasional Summit updates. Confirm your email to subscribe.</p>
+        <form class="footer-newsletter-form" method="post" action="{% url 'contact:newsletter-subscribe' %}">
+          {% csrf_token %}
+          <div class="honeypot-field" aria-hidden="true">
+            <label for="footer-website">Leave this field empty</label>
+            <input id="footer-website" name="website" type="text" tabindex="-1" autocomplete="off">
+          </div>
+          <label for="footer-newsletter-email">Email address</label>
+          <input id="footer-newsletter-email" name="email" type="email" maxlength="254" autocomplete="email" required>
+          <label class="footer-consent" for="footer-newsletter-consent">
+            <input id="footer-newsletter-consent" name="consent_given" type="checkbox" required>
+            <span>I agree to receive Summit updates. <a href="{% url 'contact:privacy' %}">Privacy details</a>.</span>
+          </label>
+          <button type="submit">Subscribe</button>
+        </form>
+      </section>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© Youth School for Social Entrepreneurs</span>
+    <div class="footer-credit">
+      <span>Built for the next generation of changemakers.</span>
+      <details class="developer-contact">
+        <summary>Develop &amp; design by <span class="developer-name">MD. Imtiaz Sarder</span></summary>
+        <div class="contact-links" aria-label="Contact MD. Imtiaz Sarder">
+          <a
+            class="contact-link facebook-link"
+            href="https://www.facebook.com/mdimtiaz.joy.50"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Visit MD. Imtiaz Sarder on Facebook"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M13.5 21v-8h2.8l.4-3.1h-3.2v-2c0-.9.3-1.5 1.6-1.5h1.7V3.6c-.3 0-1.3-.1-2.5-.1-2.5 0-4.2 1.5-4.2 4.3v2.1H7.3V13h2.8v8z"/>
+            </svg>
+            <span>Facebook</span>
+          </a>
+          <a
+            class="contact-link whatsapp-link"
+            href="https://wa.me/8801736712955"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Message MD. Imtiaz Sarder on WhatsApp"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M20.4 3.6A11.8 11.8 0 0 0 12 0C5.4 0 .1 5.3.1 11.9c0 2.1.6 4.2 1.6 6L0 24l6.3-1.7a12 12 0 0 0 5.7 1.5h.1C18.7 23.8 24 18.5 24 12a11.8 11.8 0 0 0-3.6-8.4ZM12.1 21.8h-.1c-1.8 0-3.5-.5-5-1.4l-.4-.2-3.7 1 1-3.6-.3-.5a9.8 9.8 0 0 1-1.5-5.2c0-5.4 4.5-9.9 9.9-9.9a9.9 9.9 0 0 1 9.9 9.9c0 5.4-4.4 9.9-9.8 9.9Zm5.5-7.4c-.3-.2-1.7-.9-2-.9-.3-.1-.5-.2-.7.2-.2.3-.8.9-1 1.1-.2.2-.3.2-.6.1-.3-.2-1.2-.5-2.3-1.5-.8-.7-1.4-1.6-1.6-1.9-.2-.3 0-.5.1-.6l.4-.5c.2-.2.2-.3.3-.5.1-.2 0-.4 0-.5l-.9-2.1c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.4s1 2.7 1.1 2.9c.2.2 2 3.1 4.8 4.3.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.5-.1 1.7-.7 1.9-1.3.2-.7.2-1.2.1-1.3-.1-.2-.3-.3-.6-.5Z"/>
+            </svg>
+            <span>WhatsApp</span>
+          </a>
+        </div>
+      </details>
+    </div>
+  </div>
+</footer>

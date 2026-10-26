@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Contact YSSE | Summit 2027{% endblock %}
+{% block styles %}<link rel="stylesheet" href="{% static 'contact/css/contact.css' %}">{% endblock %}
+
+{% block content %}
+  <section class="info-hero">
+    <div class="info-shell">
+      <p class="info-eyebrow">Get in touch</p>
+      <h1>Contact the Summit team</h1>
+      <p>For official inquiries about the YSSE Social Entrepreneurship Summit 2027, use the contact details below or send a private message.</p>
+    </div>
+  </section>
+  <section class="info-section">
+    <div class="info-shell contact-layout">
+      <div class="contact-details">
+        <article class="info-card">
+          <h2>Official email</h2>
+          <p><a href="mailto:{% if settings %}{{ settings.official_email }}{% else %}ysse.hrd@gmail.com{% endif %}">{% if settings %}{{ settings.official_email }}{% else %}ysse.hrd@gmail.com{% endif %}</a></p>
+        </article>
+        {% if settings and settings.hotline_numbers %}
+          <article class="info-card">
+            <h2>Hotline</h2>
+            <p>{{ settings.hotline_numbers }}</p>
+          </article>
+        {% endif %}
+        {% if settings and settings.office_address %}
+          <article class="info-card">
+            <h2>Office address</h2>
+            <p>{{ settings.office_address }}</p>
+          </article>
+        {% endif %}
+      </div>
+      <form class="info-card info-form" method="post">
+        {% csrf_token %}
+        <h2>Send an inquiry</h2>
+        <p>Your message is private and reviewed by authorized staff. It will not be published.</p>
+        {% if form.non_field_errors %}<div class="info-errors" role="alert">{{ form.non_field_errors }}</div>{% endif %}
+        <div class="honeypot-field" aria-hidden="true">{{ form.website }}</div>
+        {% for field in form %}
+          {% if field.name != "website" and field.name != "consent_given" %}
+            <div class="info-field">
+              <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+              {{ field }}
+              {% for error in field.errors %}<span class="info-field-error">{{ error }}</span>{% endfor %}
+            </div>
+          {% endif %}
+        {% endfor %}
+        <label class="info-consent" for="{{ form.consent_given.id_for_label }}">
+          {{ form.consent_given }}<span>I agree that the Summit team may use these details to respond to my inquiry. See the <a href="{% url 'contact:privacy' %}">Privacy Policy</a>.</span>
+        </label>
+        {% for error in form.consent_given.errors %}<span class="info-field-error">{{ error }}</span>{% endfor %}
+        <button class="info-button" type="submit">Send private inquiry</button>
+      </form>
+    </div>
+  </section>
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}My Registrations | YSSE Summit 2027{% endblock %}
+{% block styles %}<link rel="stylesheet" href="{% static 'registrations/css/registrations.css' %}">{% endblock %}
+
+{% block content %}
+  <section class="registration-section">
+    <div class="registration-shell">
+      <p class="registration-kicker">Your account</p>
+      <h1>My registrations</h1>
+      {% if registrations %}
+        <div class="history-list">
+          {% for registration in registrations %}
+            <article class="history-card">
+              <div><h2>{{ registration.pass_name_snapshot }}</h2><p>{{ registration.event.event_title }} · {{ registration.submitted_at|date:"M j, Y" }}</p></div>
+              <p>{{ registration.get_status_display }} · {{ registration.get_payment_status_display }}</p>
+              <a class="registration-text-link" href="{% url 'registrations:detail' registration.reference %}">View registration</a>
+            </article>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p class="registration-notice">You do not have a summit registration yet.</p>
+        <a class="registration-button" href="{% url 'registrations:passes' %}">Explore passes</a>
+      {% endif %}
+    </div>
+  </section>
+{% endblock %}

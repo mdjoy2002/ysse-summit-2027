@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Registration {{ registration.reference }} | YSSE Summit 2027{% endblock %}
+{% block styles %}<link rel="stylesheet" href="{% static 'registrations/css/registrations.css' %}">{% endblock %}
+
+{% block content %}
+  <section class="registration-section">
+    <div class="registration-shell registration-result">
+      <p class="registration-kicker">Registration reference</p>
+      <h1>{{ registration.reference }}</h1>
+      <p class="registration-notice" role="status">Registration: <strong>{{ registration.get_status_display }}</strong> · Payment: <strong>{{ registration.get_payment_status_display }}</strong></p>
+      <dl class="registration-summary">
+        <div><dt>Participant</dt><dd>{{ registration.full_name }}</dd></div>
+        <div><dt>Pass</dt><dd>{{ registration.pass_name_snapshot }}</dd></div>
+        <div><dt>Amount due</dt><dd>৳ {{ registration.amount_due|floatformat:2 }}</dd></div>
+        <div><dt>Event</dt><dd>{{ registration.event.event_title }}</dd></div>
+        <div><dt>Date and time</dt><dd>{{ registration.event.event_start_at|date:"l, F j, Y · g:i A" }} Bangladesh time</dd></div>
+        <div><dt>Venue</dt><dd>{{ registration.event.venue|default:"To be announced" }}</dd></div>
+      </dl>
+      {% if registration.amount_due > 0 and registration.payment_status != "paid" and registration.payment_status != "refunded" %}
+        <section class="payment-panel" aria-labelledby="payment-panel-title">
+          <div class="payment-panel-heading">
+            <p class="registration-kicker">Registration payment</p>
+            <h2 id="payment-panel-title">Choose a payment method</h2>
+            <p>Amount due: <strong>৳ {{ registration.amount_due|floatformat:2 }}</strong></p>
+          </div>
+          <ul class="payment-method-list" aria-label="Payment method availability">
+            {% for method in planned_payment_methods %}
+              <li class="payment-method{% if method.available %} is-available{% else %} is-unavailable{% endif %}">
+                <span>{{ method.label }}</span>
+                <span class="payment-method-status">
+                  {% if method.available %}{% if demo_payment_mode %}Demo available{% else %}Available{% endif %}{% else %}Not configured{% endif %}
+                </span>
+              </li>
+            {% endfor %}
+          </ul>
+          {% if payment_methods %}
+            <form class="payment-checkout-form" method="post" action="{% url 'payments:start' registration.reference %}">
+              {% csrf_token %}
+              <label for="payment-method">Select method</label>
+              <select id="payment-method" name="method" required>
+                {% for value, label in payment_methods %}<option value="{{ value }}">{{ label }}</option>{% endfor %}
+              </select>
+              <button class="registration-button" type="submit">{% if demo_payment_mode %}Open demo checkout{% else %}Continue to secure checkout{% endif %}</button>
+            </form>
+            {% if demo_payment_mode %}
+              <p class="payment-unavailable-note" role="note">Development demo only: choose a simulated result on the next page. No real payment is made and this mode must not be used in production.</p>
+            {% else %}
+              <p class="payment-security-note">Payment confirmation is verified by the payment provider. Returning from checkout alone does not confirm payment.</p>
+            {% endif %}
+          {% else %}
+            <p class="payment-unavailable-note" role="status">Online checkout is not active yet. The organizer must configure an approved payment provider and merchant credentials. Do not send payment details through this website until checkout is enabled.</p>
+          {% endif %}
+        </section>
+      {% endif %}
+      {% if payment_transactions %}
+        <h2>Payment attempts</h2>
+        <ul>{% for payment in payment_transactions %}<li><a href="{% url 'payments:status' payment.reference %}">{{ payment.get_method_display }} · {{ payment.get_status_display }} · {{ payment.created_at|date:"M j, Y g:i A" }}</a></li>{% endfor %}</ul>
+      {% endif %}
+      {% if registration.ticket_is_valid %}
+        <a class="registration-button" href="{% url 'registrations:ticket' registration.ticket_reference %}">View and print ticket <span aria-hidden="true">↗</span></a>
+      {% else %}
+        <p>Your ticket will be available after the registration is confirmed under the summit's payment and approval rules.</p>
+      {% endif %}
+      <a class="registration-text-link" href="{% url 'registrations:history' %}">View my registrations</a>
+    </div>
+  </section>
+{% endblock %}

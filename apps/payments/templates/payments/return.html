@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}Payment Status | YSSE Summit 2027{% endblock %}
+
+{% block content %}
+  <section class="registration-section">
+    <div class="registration-shell registration-result">
+      <p class="registration-kicker">Payment attempt</p>
+      <h1>{{ payment.get_status_display }}</h1>
+      <p>This page displays the server-recorded status only. Returning from a payment page does not confirm payment.</p>
+      <dl class="registration-summary">
+        <div><dt>Attempt reference</dt><dd>{{ payment.reference }}</dd></div>
+        <div><dt>Registration reference</dt><dd>{{ payment.registration.reference }}</dd></div>
+        <div><dt>Amount</dt><dd>{{ payment.currency }} {{ payment.amount|floatformat:2 }}</dd></div>
+        <div><dt>Method</dt><dd>{{ payment.get_method_display }}</dd></div>
+        {% if payment.verified_at %}<div><dt>Verified at</dt><dd>{{ payment.verified_at|date:"M j, Y g:i A" }} Bangladesh time</dd></div>{% endif %}
+      </dl>
+      <p>Registration status: {{ payment.registration.get_status_display }} · Payment status: {{ payment.registration.get_payment_status_display }}</p>
+      <a class="registration-text-link" href="{% url 'registrations:detail' payment.registration.reference %}">Return to registration</a>
+    </div>
+  </section>
+{% endblock %}

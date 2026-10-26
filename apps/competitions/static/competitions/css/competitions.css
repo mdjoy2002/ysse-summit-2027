@@ -1,0 +1,714 @@
+.competition-shell {
+  width: min(1120px, calc(100% - 3rem));
+  margin-inline: auto;
+}
+
+.competition-hero,
+.competition-detail-hero {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  color: #fff;
+  background:
+    radial-gradient(ellipse at 78% 22%, rgb(212 237 131 / 18%), transparent 32%),
+    linear-gradient(120deg, #08251d 8%, #12382c 62%, #234835);
+}
+
+.competition-hero > .competition-shell {
+  position: relative;
+  z-index: 1;
+  padding-block: clamp(5rem, 11vw, 9rem);
+}
+
+.competition-hero h1,
+.competition-detail-hero h1,
+.competition-history-section h1,
+.competition-form-shell h1,
+.competition-login-card h1 {
+  max-width: 860px;
+  margin: 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(3rem, 7vw, 6rem);
+  font-weight: 500;
+  letter-spacing: -0.055em;
+  line-height: 1;
+  text-wrap: balance;
+}
+
+.competition-hero h1 em,
+.competition-detail-hero h1 em,
+.competition-history-section h1 em,
+.competition-form-shell h1 em,
+.competition-login-card h1 em {
+  color: #d4ed83;
+  font-weight: 500;
+}
+
+.competition-hero > .competition-shell > p:not(.competition-eyebrow) {
+  max-width: 570px;
+  margin: 1.4rem 0 0;
+  color: #d2ded5;
+  font-size: 1.05rem;
+}
+
+.competition-eyebrow,
+.competition-kicker {
+  margin: 0 0 0.8rem;
+  color: #77964f;
+  font-size: 0.72rem;
+  font-weight: 750;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.competition-eyebrow {
+  color: #d4ed83;
+}
+
+.competition-section {
+  padding-block: clamp(4rem, 8vw, 6.5rem);
+}
+
+.competition-section-heading {
+  margin-bottom: 2.4rem;
+}
+
+.competition-section-heading h2,
+.competition-content-section h2,
+.competition-empty h3 {
+  margin: 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(2.2rem, 4vw, 3.5rem);
+  font-weight: 500;
+  letter-spacing: -0.045em;
+  line-height: 1.1;
+}
+
+.competition-section-heading h2 em {
+  color: #61833d;
+  font-weight: 500;
+}
+
+.competition-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.15rem;
+}
+
+.competition-card {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid #e5e9df;
+  border-radius: 1rem;
+  background: #fff;
+  box-shadow: 0 1rem 2.8rem rgb(14 36 27 / 5%);
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.competition-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 1.4rem 3rem rgb(14 36 27 / 10%);
+}
+
+.competition-card-link {
+  display: block;
+  height: 100%;
+}
+
+.competition-cover,
+.competition-cover-placeholder {
+  width: 100%;
+  height: 190px;
+  object-fit: cover;
+}
+
+.competition-cover-placeholder {
+  position: relative;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  color: rgb(255 255 255 / 24%);
+  background:
+    radial-gradient(circle at 70% 20%, rgb(212 237 131 / 24%), transparent 35%),
+    linear-gradient(135deg, #08251d, #234835);
+}
+
+.competition-cover-placeholder span {
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.28em;
+}
+
+.competition-cover-placeholder i {
+  position: absolute;
+  right: 1rem;
+  bottom: 0.25rem;
+  color: rgb(212 237 131 / 55%);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 4rem;
+  font-style: normal;
+}
+
+.competition-card-content {
+  display: flex;
+  min-height: 230px;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 1.35rem;
+}
+
+.competition-status {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.32rem 0.7rem;
+  border: 1px solid #dce7bd;
+  border-radius: 999px;
+  color: #315122;
+  background: #f2f7e4;
+  font-size: 0.68rem;
+  font-weight: 750;
+  letter-spacing: 0.04em;
+}
+
+.competition-status-open {
+  border-color: #c5e3ce;
+  color: #145c35;
+  background: #edf8ef;
+}
+
+.competition-status-closed,
+.competition-status-completed {
+  border-color: #e6e7e3;
+  color: #66716b;
+  background: #f3f4f1;
+}
+
+.competition-status-draft {
+  color: #8a4b16;
+  background: #fff5e8;
+}
+
+.competition-card h3 {
+  margin: 1rem 0 0;
+  font-size: 1.25rem;
+  line-height: 1.3;
+}
+
+.competition-card-content > p {
+  margin: 0.55rem 0 1.2rem;
+  color: #68766e;
+  font-size: 0.9rem;
+}
+
+.competition-card-cta {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: 0.9rem;
+  border-top: 1px solid #edf0e9;
+  color: #315a3e;
+  font-size: 0.84rem;
+  font-weight: 750;
+}
+
+.competition-empty {
+  padding: 3rem 1.5rem;
+  border: 1px dashed #cbd4c5;
+  border-radius: 1rem;
+  text-align: center;
+}
+
+.competition-empty > span {
+  display: block;
+  margin-bottom: 1rem;
+  color: #769849;
+  font-size: 1.7rem;
+}
+
+.competition-empty p {
+  color: #68766e;
+}
+
+.competition-button {
+  display: inline-flex;
+  min-height: 3rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  padding: 0.75rem 1.15rem;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font-size: 0.84rem;
+  font-weight: 750;
+  cursor: pointer;
+  transition: transform 160ms ease, background 160ms ease;
+}
+
+.competition-button:hover {
+  transform: translateY(-2px);
+}
+
+.competition-button-light,
+.competition-button-primary {
+  margin-top: 1.5rem;
+  color: #08251d;
+  background: #d4ed83;
+}
+
+.competition-button-primary:hover,
+.competition-button-light:hover {
+  background: #e1f49e;
+}
+
+.competition-button-disabled {
+  color: #dce6df;
+  background: #53665d;
+  cursor: not-allowed;
+}
+
+.competition-button-outline {
+  border-color: rgb(255 255 255 / 35%);
+  color: #fff;
+  background: rgb(255 255 255 / 5%);
+}
+
+.competition-button-outline-dark {
+  border-color: #cbd5c7;
+  color: #183326;
+  background: #fff;
+}
+
+.competition-button-outline-dark:hover {
+  background: #f2f5ed;
+}
+
+.competition-detail-hero {
+  min-height: 420px;
+  display: flex;
+  align-items: center;
+}
+
+.competition-detail-cover,
+.competition-detail-scrim {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.competition-detail-cover {
+  object-fit: cover;
+}
+
+.competition-detail-scrim {
+  background: linear-gradient(90deg, rgb(5 28 21 / 94%), rgb(5 28 21 / 72%) 60%, rgb(5 28 21 / 40%));
+}
+
+.competition-detail-content {
+  position: relative;
+  z-index: 1;
+  padding-block: 4.5rem;
+}
+
+.competition-back-link {
+  display: inline-flex;
+  margin-bottom: 1.2rem;
+  color: #61833d;
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
+.competition-detail-content .competition-back-link {
+  color: #d2ded5;
+}
+
+.competition-detail-content .competition-status {
+  display: flex;
+  width: fit-content;
+  margin-bottom: 1rem;
+}
+
+.competition-detail-hero h1 {
+  font-size: clamp(2.8rem, 6vw, 5.2rem);
+}
+
+.competition-detail-lede {
+  max-width: 620px;
+  margin: 1rem 0 0;
+  color: #d2ded5;
+  font-size: 1.08rem;
+}
+
+.competition-detail-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  margin-top: 1.7rem;
+}
+
+.competition-detail-actions .competition-button {
+  margin-top: 0;
+}
+
+.competition-detail-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  align-items: start;
+  gap: 3rem;
+  padding-block: 3.5rem 6rem;
+}
+
+.competition-detail-main {
+  min-width: 0;
+}
+
+.competition-content-section {
+  padding-block: 1.8rem;
+  border-bottom: 1px solid #e5e9df;
+}
+
+.competition-content-section:first-child {
+  padding-top: 0;
+}
+
+.competition-content-section h2 {
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+}
+
+.competition-content-section h3 {
+  margin-top: 1.4rem;
+}
+
+.competition-prose,
+.competition-muted,
+.competition-content-section > p:not(.competition-kicker) {
+  color: #68766e;
+  line-height: 1.75;
+}
+
+.competition-prose p {
+  margin: 0.6rem 0;
+}
+
+.competition-inline-link {
+  display: inline-flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  color: #315a3e;
+  font-weight: 750;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.competition-motion-list {
+  padding-left: 1.25rem;
+  color: #68766e;
+}
+
+.competition-motion-list li {
+  padding-block: 0.35rem;
+}
+
+.competition-leaderboard-note {
+  margin-top: 1.2rem;
+  padding: 1.1rem;
+  border-left: 3px solid #d4ed83;
+  background: #f2f5ed;
+}
+
+.competition-leaderboard-note p {
+  margin: 0.35rem 0 0;
+  color: #68766e;
+  font-size: 0.88rem;
+}
+
+.competition-detail-sidebar {
+  position: sticky;
+  top: 6rem;
+}
+
+.competition-sidebar-card {
+  padding: 1.4rem;
+  border: 1px solid #e5e9df;
+  border-radius: 1rem;
+  background: #fff;
+  box-shadow: 0 1rem 2.8rem rgb(14 36 27 / 5%);
+}
+
+.competition-sidebar-card p:not(.competition-kicker) {
+  color: #68766e;
+  font-size: 0.87rem;
+  line-height: 1.6;
+}
+
+.competition-sidebar-card strong {
+  color: #14271f;
+}
+
+.competition-sidebar-card hr {
+  border: 0;
+  border-top: 1px solid #e5e9df;
+}
+
+.competition-form-section,
+.competition-history-section {
+  min-height: 60vh;
+  padding-block: clamp(3rem, 7vw, 5.5rem);
+}
+
+.competition-form-shell {
+  width: min(760px, calc(100% - 2rem));
+  margin-inline: auto;
+}
+
+.competition-form-shell h1,
+.competition-login-card h1,
+.competition-history-section h1 {
+  color: #14271f;
+  font-size: clamp(2.5rem, 5vw, 4rem);
+}
+
+.competition-form-shell h1 em,
+.competition-login-card h1 em,
+.competition-history-section h1 em {
+  color: #61833d;
+}
+
+.competition-form-intro,
+.competition-muted {
+  color: #68766e;
+  line-height: 1.7;
+}
+
+.competition-form {
+  display: grid;
+  gap: 1.1rem;
+  margin-top: 2rem;
+}
+
+.competition-form-field {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.competition-form-field label {
+  font-size: 0.88rem;
+  font-weight: 750;
+}
+
+.competition-form-field input,
+.competition-form-field select,
+.competition-form-field textarea {
+  width: 100%;
+  min-height: 2.9rem;
+  padding: 0.75rem 0.85rem;
+  border: 1px solid #cdd6ca;
+  border-radius: 0.55rem;
+  color: #14271f;
+  background: #fff;
+  font: inherit;
+}
+
+.competition-form-field textarea {
+  min-height: 7rem;
+  resize: vertical;
+}
+
+.competition-form-field input:focus,
+.competition-form-field select:focus,
+.competition-form-field textarea:focus {
+  outline: 3px solid rgb(155 189 72 / 30%);
+  border-color: #739343;
+}
+
+.competition-form-field small {
+  color: #68766e;
+  line-height: 1.5;
+}
+
+.competition-field-error,
+.competition-form .errorlist {
+  color: #a32d20;
+  font-size: 0.83rem;
+}
+
+.competition-form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.competition-form-actions .competition-button {
+  margin-top: 0;
+}
+
+.competition-existing-file {
+  padding: 0.8rem;
+  border-radius: 0.5rem;
+  background: #f2f5ed;
+}
+
+.competition-existing-file a {
+  color: #315a3e;
+  text-decoration: underline;
+}
+
+.competition-confirmation {
+  margin-block: 1.5rem;
+  padding: 1rem 1.25rem;
+  border: 1px solid #dbe6c5;
+  border-radius: 0.8rem;
+  background: #f6f9ed;
+}
+
+.competition-confirmation p {
+  overflow-wrap: anywhere;
+}
+
+.competition-confirmation a {
+  color: #315a3e;
+  text-decoration: underline;
+}
+
+.competition-submission-data section,
+.competition-review-note {
+  padding: 1rem 0;
+  border-bottom: 1px solid #e5e9df;
+}
+
+.competition-submission-data h2,
+.competition-review-note h2 {
+  margin: 0;
+  font-size: 1rem;
+  text-transform: capitalize;
+}
+
+.competition-submission-data p,
+.competition-review-note p {
+  overflow-wrap: anywhere;
+  color: #4e5e55;
+  line-height: 1.7;
+}
+
+.competition-history-list {
+  display: grid;
+  gap: 0.85rem;
+  margin-top: 2rem;
+}
+
+.competition-history-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.25rem;
+  border: 1px solid #e5e9df;
+  border-radius: 0.9rem;
+  background: #fff;
+}
+
+.competition-history-card h2 {
+  margin: 0;
+  font-size: 1.15rem;
+}
+
+.competition-history-card p:last-child {
+  margin-bottom: 0;
+  color: #68766e;
+  font-size: 0.85rem;
+}
+
+.competition-login-card {
+  width: min(480px, calc(100% - 2rem));
+  margin-inline: auto;
+  padding: clamp(1.4rem, 4vw, 2.2rem);
+  border: 1px solid #e5e9df;
+  border-radius: 1rem;
+  background: #fff;
+  box-shadow: 0 1rem 3rem rgb(14 36 27 / 7%);
+}
+
+.competition-login-card > p:not(.competition-kicker) {
+  color: #68766e;
+}
+
+@media (max-width: 900px) {
+  .competition-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .competition-detail-layout {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .competition-detail-sidebar {
+    position: static;
+  }
+}
+
+@media (max-width: 600px) {
+  .competition-shell {
+    width: min(100% - 2rem, 1120px);
+  }
+
+  .competition-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .competition-cover,
+  .competition-cover-placeholder {
+    height: 165px;
+  }
+
+  .competition-card-content {
+    min-height: 205px;
+  }
+
+  .competition-detail-hero {
+    min-height: 400px;
+  }
+
+  .competition-detail-content {
+    padding-block: 3.2rem;
+  }
+
+  .competition-detail-layout {
+    padding-top: 2.5rem;
+  }
+
+  .competition-detail-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .competition-detail-actions .competition-button {
+    width: fit-content;
+  }
+
+  .competition-form-actions {
+    align-items: stretch;
+    flex-direction: column-reverse;
+  }
+
+  .competition-form-actions .competition-button {
+    width: 100%;
+  }
+
+  .competition-history-card {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .competition-card,
+  .competition-button {
+    transition: none;
+  }
+}

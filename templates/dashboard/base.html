@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block styles %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'dashboard/css/dashboard.css' %}">
+{% endblock %}
+
+{% block content %}
+  <div class="dashboard-app">
+    <aside id="dashboard-sidebar" class="dashboard-sidebar" aria-label="Management navigation">
+      <a class="dashboard-brand" href="{% url 'dashboard:overview' %}">
+        <span class="dashboard-brand-mark" aria-hidden="true">Y</span>
+        <span><strong>YSSE Summit</strong><small>Management</small></span>
+      </a>
+      <nav class="dashboard-nav">
+        <p class="dashboard-nav-label">Workspace</p>
+        <a href="{% url 'dashboard:overview' %}" {% if request.resolver_match.url_name == "overview" %}aria-current="page"{% endif %}>Overview</a>
+        <a href="{% url 'dashboard:records_index' %}" {% if request.resolver_match.url_name == "records_index" or request.resolver_match.url_name == "records_list" %}aria-current="page"{% endif %}>All records</a>
+        <a href="{% url 'dashboard:reports' %}" {% if request.resolver_match.url_name == "reports" %}aria-current="page"{% endif %}>Reports</a>
+        <p class="dashboard-nav-label">Management</p>
+        {% for shortcut in shortcuts %}
+          {% if request.user.is_superuser %}{% ifchanged shortcut.description %}<p class="dashboard-nav-label">{{ shortcut.description }}</p>{% endifchanged %}{% endif %}
+          <a href="{{ shortcut.url }}" {% if request.path == shortcut.url %}aria-current="page"{% endif %}>{{ shortcut.label }}</a>
+        {% endfor %}
+      </nav>
+      <div class="dashboard-sidebar-note">
+        <span class="dashboard-live-dot" aria-hidden="true"></span>
+        <span>Access is permission controlled</span>
+      </div>
+    </aside>
+
+    <div class="dashboard-main">
+      <header class="dashboard-topbar">
+        <div>
+          <p class="dashboard-eyebrow">YSSE Social Entrepreneurship Summit 2027</p>
+          <h1>{% block dashboard_title %}Management overview{% endblock %}</h1>
+        </div>
+        <div class="dashboard-account">
+          <button class="dashboard-nav-toggle" type="button" aria-controls="dashboard-sidebar" aria-expanded="false">Menu</button>
+          <span class="dashboard-avatar" aria-hidden="true">{{ request.user.get_username|first|upper }}</span>
+          <span class="dashboard-account-name">{{ request.user.get_full_name|default:request.user.get_username }}</span>
+          <form method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit">Sign out</button>
+          </form>
+        </div>
+      </header>
+      {% if messages %}
+        <div class="dashboard-messages" aria-label="Notifications">
+          {% for message in messages %}<p class="dashboard-message" role="status">{{ message }}</p>{% endfor %}
+        </div>
+      {% endif %}
+      <section class="dashboard-content" aria-label="Dashboard content">
+        {% block dashboard_content %}{% endblock %}
+      </section>
+      <footer class="dashboard-footer">
+        <span>YSSE Summit 2027 · Staff workspace</span>
+        <a href="{% url 'dashboard:records_index' %}">All records</a>
+      </footer>
+    </div>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+  {{ block.super }}
+  <script src="{% static 'dashboard/js/dashboard.js' %}" defer></script>
+{% endblock %}

@@ -1,0 +1,187 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}About YSSE | Our Story &amp; Impact{% endblock %}
+{% block meta_description %}Explore YSSE's editable timeline, verified impact, founder's vision, and initiatives.{% endblock %}
+{% block styles %}<link rel="stylesheet" href="{% static 'about/css/about.css' %}">{% endblock %}
+
+{% block content %}
+  <section class="about-hero" aria-labelledby="about-title">
+    <div class="about-shell about-hero-inner">
+      <p class="about-eyebrow"><span aria-hidden="true">✳</span> The people and purpose behind YSSE</p>
+      <h1 id="about-title">Young ideas.<br><em>Lasting impact.</em></h1>
+      <p class="about-hero-copy">Get to know YSSE through its milestones, the initiatives it brings together, and the people working toward a more inclusive future.</p>
+      <a class="about-hero-link" href="#our-story">Explore our story <span aria-hidden="true">↓</span></a>
+      <div class="about-hero-note" aria-hidden="true"><span>YSSE</span><i></i><span>12 years of legacy</span></div>
+    </div>
+  </section>
+
+  <section class="about-section timeline-section" id="our-story" aria-labelledby="timeline-title">
+    <div class="about-shell">
+      <div class="about-section-heading">
+        <p class="about-kicker">A journey of learning and action</p>
+        <h2 id="timeline-title">Our story, <em>over time.</em></h2>
+        <p>Explore the milestones that have shaped the YSSE journey.</p>
+      </div>
+      {% if timeline_periods %}
+        <div class="timeline">
+          {% for period in timeline_periods %}
+            <article class="timeline-period">
+              <div class="timeline-date">
+                <span>{{ period.start_year }}—{{ period.end_year }}</span>
+                <i aria-hidden="true"></i>
+              </div>
+              <div class="timeline-card">
+                <span class="timeline-index">0{{ forloop.counter }}</span>
+                <h3>{{ period.title }}</h3>
+                {% if period.milestones.all %}
+                  <ul>
+                    {% for milestone in period.milestones.all %}
+                      <li>{{ milestone.description }}</li>
+                    {% endfor %}
+                  </ul>
+                {% else %}
+                  <p class="about-inline-empty">Milestones for this period will be added soon.</p>
+                {% endif %}
+              </div>
+            </article>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="about-empty-state">
+          <span class="about-empty-icon" aria-hidden="true">◷</span>
+          <h3>Our timeline is being prepared.</h3>
+          <p>Historical milestones will appear here once they are ready to share.</p>
+        </div>
+      {% endif %}
+    </div>
+  </section>
+
+  <section class="impact-section" id="impact" aria-labelledby="impact-title">
+    <div class="about-shell">
+      <div class="about-section-heading impact-heading">
+        <p class="about-kicker">The work, measured thoughtfully</p>
+        <h2 id="impact-title">Impact in <em>numbers.</em></h2>
+        <p>Figures are published only after they have been verified.</p>
+      </div>
+      {% if impact_statistics %}
+        <div class="impact-grid">
+          {% for statistic in impact_statistics %}
+            <article class="impact-card">
+              <span class="impact-value">{{ statistic.value }}</span>
+              <h3>{{ statistic.label }}</h3>
+            </article>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="impact-verification-note">
+          <span aria-hidden="true">✳</span>
+          <p>YSSE impact figures are being verified. Confirmed statistics will be shared here.</p>
+        </div>
+      {% endif %}
+    </div>
+  </section>
+
+  <section class="about-section founder-section" id="founder-vision" aria-labelledby="founder-title">
+    <div class="about-shell">
+      <div class="about-section-heading">
+        <p class="about-kicker">A perspective that keeps us moving</p>
+        <h2 id="founder-title">The founder’s <em>vision.</em></h2>
+      </div>
+      {% if founder_vision %}
+        <article class="founder-card">
+          <div class="founder-media">
+            {% if founder_vision.profile_image %}
+              <img class="founder-profile" src="{{ founder_vision.profile_image.url }}" alt="Portrait of {{ founder_vision.name }}" loading="lazy">
+            {% else %}
+              <div class="founder-profile-placeholder" aria-hidden="true"><span>YSSE</span></div>
+            {% endif %}
+            {% if founder_vision.video_message_url %}
+              <a
+                class="founder-video-link"
+                href="{{ founder_vision.video_message_url }}"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Watch {{ founder_vision.name }}’s video message"
+              >
+                {% if founder_vision.video_thumbnail %}
+                  <img src="{{ founder_vision.video_thumbnail.url }}" alt="" loading="lazy">
+                {% else %}
+                  <span class="founder-video-placeholder" aria-hidden="true"></span>
+                {% endif %}
+                <span class="play-button" aria-hidden="true">▶</span>
+                <span class="video-caption">Watch video message</span>
+              </a>
+            {% endif %}
+          </div>
+          <div class="founder-message">
+            <span class="founder-quote-mark" aria-hidden="true">“</span>
+            <blockquote>{{ founder_vision.written_message|linebreaksbr }}</blockquote>
+            <div class="founder-attribution">
+              <h3>{{ founder_vision.name }}</h3>
+              <p>{{ founder_vision.designation }}</p>
+            </div>
+          </div>
+        </article>
+      {% else %}
+        <div class="about-empty-state founder-empty-state">
+          <span class="about-empty-icon" aria-hidden="true">✳</span>
+          <h3>A message from YSSE leadership is on its way.</h3>
+          <p>The founder’s vision will be shared here when it is ready to publish.</p>
+        </div>
+      {% endif %}
+    </div>
+  </section>
+
+  <section class="wings-section about-section" id="wings" aria-labelledby="wings-title">
+    <div class="about-shell">
+      <div class="about-section-heading">
+        <p class="about-kicker">Different paths, shared purpose</p>
+        <h2 id="wings-title">Meet the <em>YSSE wings.</em></h2>
+        <p>Explore the initiatives that are part of the YSSE ecosystem.</p>
+      </div>
+      {% if wings %}
+        <div class="wings-grid">
+          {% for wing in wings %}
+            <article class="wing-card">
+              <div class="wing-visual">
+                {% if wing.image %}
+                  <img src="{{ wing.image.url }}" alt="{{ wing.name }} logo" loading="lazy">
+                {% else %}
+                  <span class="wing-initial" aria-hidden="true">{{ wing.name|first }}</span>
+                {% endif %}
+                <span class="wing-order">0{{ forloop.counter }}</span>
+              </div>
+              <div class="wing-content">
+                <h3>{{ wing.name }}</h3>
+                <p>{{ wing.description }}</p>
+                {% if wing.external_url %}
+                  <a class="wing-link" href="{{ wing.external_url }}" target="_blank" rel="noopener noreferrer">
+                    Explore initiative <span aria-hidden="true">↗</span>
+                  </a>
+                {% endif %}
+              </div>
+            </article>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="about-empty-state">
+          <span class="about-empty-icon" aria-hidden="true">✳</span>
+          <h3>YSSE initiatives will be featured here.</h3>
+          <p>Information about the YSSE wings is being prepared.</p>
+        </div>
+      {% endif %}
+    </div>
+  </section>
+
+  <section class="about-cta-section">
+    <div class="about-shell about-cta">
+      <div>
+        <p class="about-kicker">Be part of what comes next</p>
+        <h2>There’s room for your ideas here.</h2>
+        <p>Join the summit and connect with people imagining new ways forward.</p>
+      </div>
+      <a class="about-cta-link" href="{% url 'home:index' %}#registration">Explore the summit <span aria-hidden="true">↗</span></a>
+    </div>
+  </section>
+{% endblock %}

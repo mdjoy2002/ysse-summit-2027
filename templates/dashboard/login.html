@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Admin Panel 2 | YSSE Summit{% endblock %}
+{% block styles %}
+  <link rel="stylesheet" href="{% static 'dashboard/css/dashboard.css' %}">
+{% endblock %}
+
+{% block content %}
+  <section class="dashboard-login">
+    <div class="dashboard-login-card">
+      <p class="dashboard-eyebrow">YSSE Social Entrepreneurship Summit 2027</p>
+      <h1>Admin Panel 2</h1>
+      <p>Sign in with an authorized moderator or administrator account.</p>
+      <form method="post">
+        {% csrf_token %}
+        {% if form.non_field_errors %}
+          <div class="dashboard-login-errors" role="alert">{{ form.non_field_errors }}</div>
+        {% endif %}
+        {% for field in form %}
+          <div class="dashboard-login-field">
+            {{ field.label_tag }}
+            {{ field }}
+            {% for error in field.errors %}<p role="alert">{{ error }}</p>{% endfor %}
+          </div>
+        {% endfor %}
+        {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
+        <button type="submit">Sign in securely</button>
+      </form>
+    </div>
+  </section>
+{% endblock %}

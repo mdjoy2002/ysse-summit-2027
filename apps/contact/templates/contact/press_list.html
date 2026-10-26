@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Press Releases | YSSE Summit 2027{% endblock %}
+{% block styles %}<link rel="stylesheet" href="{% static 'contact/css/contact.css' %}">{% endblock %}
+
+{% block content %}
+  <section class="info-hero">
+    <div class="info-shell">
+      <p class="info-eyebrow">Newsroom</p>
+      <h1>Press releases</h1>
+      <p>Official updates published by the Summit team.</p>
+    </div>
+  </section>
+  <section class="info-section">
+    <div class="info-shell press-grid">
+      {% for release in releases %}
+        <article class="info-card press-card">
+          {% if release.cover_image %}<img src="{% url 'contact:press-cover' release.slug %}" alt="" loading="lazy">{% endif %}
+          <p class="info-eyebrow">{{ release.publication_date|date:"F j, Y" }}</p>
+          <h2><a href="{% url 'contact:press-detail' release.slug %}">{{ release.title }}</a></h2>
+          <p>{{ release.content|truncatewords:32 }}</p>
+          <a class="info-text-link" href="{% url 'contact:press-detail' release.slug %}">Read release</a>
+        </article>
+      {% empty %}
+        <div class="info-card info-empty">
+          <h2>No press releases yet</h2>
+          <p>Official releases will be published here.</p>
+        </div>
+      {% endfor %}
+    </div>
+  </section>
+{% endblock %}

@@ -1,0 +1,88 @@
+{% extends "dashboard/base.html" %}
+
+{% block styles %}
+  {{ block.super }}
+  {{ form.media.css }}
+  {% for entry in inline_entries %}{{ entry.formset.media.css }}{% endfor %}
+{% endblock %}
+
+{% block title %}{{ title }} | YSSE Summit 2027{% endblock %}
+{% block dashboard_title %}{{ title }}{% endblock %}
+{% block dashboard_content %}
+  <section class="dashboard-welcome">
+    <div>
+      <p class="dashboard-section-kicker">Record editor</p>
+      <h2>{{ title }}</h2>
+      <p>Validation, read-only fields, and save hooks follow the configuration for this management section.</p>
+    </div>
+    <a class="dashboard-secondary-link" href="{{ cancel_url }}">Cancel</a>
+  </section>
+
+  <form class="dashboard-editor-form" method="post" enctype="multipart/form-data" novalidate>
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    {% for hidden in form.hidden_fields %}{{ hidden }}{% endfor %}
+
+    {% for section in form_sections %}
+      <section class="dashboard-panel dashboard-editor-section">
+        {% if section.name %}<h2>{{ section.name }}</h2>{% endif %}
+        <div class="dashboard-detail-grid">
+          {% for field in section.fields %}
+            <div class="dashboard-editor-field{% if field.readonly %} is-readonly{% endif %}">
+              {% if field.readonly %}
+                <span class="dashboard-editor-label">{{ field.label }}</span>
+                <div class="dashboard-editor-readonly">{{ field.value }}</div>
+              {% else %}
+                {{ field.bound_field.label_tag }}
+                {{ field.bound_field }}
+                {% if field.bound_field.help_text %}<small>{{ field.bound_field.help_text }}</small>{% endif %}
+                {{ field.bound_field.errors }}
+              {% endif %}
+            </div>
+          {% endfor %}
+        </div>
+      </section>
+    {% endfor %}
+
+    {% for entry in inline_entries %}
+      <section class="dashboard-panel dashboard-editor-section">
+        <h2>{{ entry.title }}</h2>
+        {{ entry.formset.management_form }}
+        {{ entry.formset.non_form_errors }}
+        {% for inline_row in entry.rows %}
+          <fieldset class="dashboard-inline-form">
+            <legend>{{ entry.title }} {{ forloop.counter }}</legend>
+            {% for hidden in inline_row.form.hidden_fields %}{{ hidden }}{% endfor %}
+            {{ inline_row.form.non_field_errors }}
+            <div class="dashboard-detail-grid">
+              {% for inline_field in inline_row.fields %}
+                <div class="dashboard-editor-field">
+                  {% if inline_field.readonly %}
+                    <span class="dashboard-editor-label">{{ inline_field.label }}</span>
+                    <div class="dashboard-editor-readonly">{{ inline_field.value }}</div>
+                  {% else %}
+                    {{ inline_field.bound_field.label_tag }}
+                    {{ inline_field.bound_field }}
+                    {{ inline_field.bound_field.errors }}
+                  {% endif %}
+                </div>
+              {% endfor %}
+              {% if entry.can_delete %}<div class="dashboard-editor-field">{{ inline_row.form.DELETE }} <label for="{{ inline_row.form.DELETE.id_for_label }}">Delete this related record</label></div>{% endif %}
+            </div>
+          </fieldset>
+        {% endfor %}
+      </section>
+    {% endfor %}
+
+    <div class="dashboard-editor-actions">
+      <button class="dashboard-primary-link" type="submit">Save record</button>
+      <a class="dashboard-secondary-link" href="{{ cancel_url }}">Cancel</a>
+    </div>
+  </form>
+{% endblock %}
+
+{% block scripts %}
+  {{ block.super }}
+  {{ form.media.js }}
+  {% for entry in inline_entries %}{{ entry.formset.media.js }}{% endfor %}
+{% endblock %}

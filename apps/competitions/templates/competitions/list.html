@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Competitions | YSSE Summit 2027{% endblock %}
+{% block meta_description %}Explore the six national competitions at the YSSE Social Entrepreneurship Summit 2027.{% endblock %}
+{% block styles %}<link rel="stylesheet" href="{% static 'competitions/css/competitions.css' %}">{% endblock %}
+
+{% block content %}
+  <section class="competition-hero">
+    <div class="competition-shell">
+      <p class="competition-eyebrow">YSSE SOCIAL ENTREPRENEURSHIP SUMMIT 2027</p>
+      <h1>Six ways to turn <em>ideas into impact.</em></h1>
+      <p>Explore the national competition opportunities and find the challenge that fits your ambition.</p>
+      <a class="competition-button competition-button-light" href="#competition-list">Explore competitions <span aria-hidden="true">↓</span></a>
+    </div>
+  </section>
+
+  <section class="competition-section" id="competition-list" aria-labelledby="competition-list-title">
+    <div class="competition-shell">
+      <div class="competition-section-heading">
+        <p class="competition-kicker">The national challenges</p>
+        <h2 id="competition-list-title">Choose your <em>challenge.</em></h2>
+      </div>
+      {% if competitions %}
+        <div class="competition-grid">
+          {% for competition in competitions %}
+            <article class="competition-card{% if competition.is_featured %} competition-card-featured{% endif %}">
+              <a class="competition-card-link" href="{% url 'competitions:detail' competition.slug %}">
+                {% if competition.cover_image %}
+                  <img class="competition-cover" src="{{ competition.cover_image.url }}" alt="" loading="lazy">
+                {% else %}
+                  <div class="competition-cover-placeholder" aria-hidden="true"><span>YSSE</span><i>0{{ forloop.counter }}</i></div>
+                {% endif %}
+                <div class="competition-card-content">
+                  <span class="competition-status competition-status-{{ competition.status }}">{{ competition.get_status_display }}</span>
+                  <h3>{{ competition.name }}</h3>
+                  <p>{{ competition.short_description }}</p>
+                  <span class="competition-card-cta">View competition <span aria-hidden="true">↗</span></span>
+                </div>
+              </a>
+            </article>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="competition-empty">
+          <span aria-hidden="true">✳</span>
+          <h3>Competition details are being prepared.</h3>
+          <p>Published competitions will appear here when they are ready to share.</p>
+        </div>
+      {% endif %}
+    </div>
+  </section>
+{% endblock %}

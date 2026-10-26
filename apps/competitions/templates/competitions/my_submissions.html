@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}My submissions | YSSE Competitions{% endblock %}
+{% block styles %}<link rel="stylesheet" href="{% static 'competitions/css/competitions.css' %}">{% endblock %}
+
+{% block content %}
+  <section class="competition-section competition-history-section">
+    <div class="competition-shell">
+      <p class="competition-kicker">Participant dashboard</p>
+      <h1>My <em>submissions.</em></h1>
+      {% if submissions %}
+        <div class="competition-history-list">
+          {% for submission in submissions %}
+            <article class="competition-history-card">
+              <div>
+                <p class="competition-kicker">{{ submission.competition.name }}</p>
+                <h2>{{ submission.get_status_display }}</h2>
+                <p>Reference {{ submission.reference }} · Updated {{ submission.updated_at|date:"M j, Y g:i A" }}</p>
+              </div>
+              <a class="competition-button competition-button-outline-dark" href="{% url 'competitions:submission-detail' submission.reference %}">View entry</a>
+            </article>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="competition-empty">
+          <span aria-hidden="true">✳</span>
+          <h2>No entries yet.</h2>
+          <p>Your drafts and submitted entries will appear here.</p>
+          <a class="competition-button competition-button-primary" href="{% url 'competitions:list' %}">Explore competitions</a>
+        </div>
+      {% endif %}
+    </div>
+  </section>
+{% endblock %}

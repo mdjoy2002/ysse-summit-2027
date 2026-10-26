@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Summit Ticket | YSSE Summit 2027{% endblock %}
+{% block styles %}<link rel="stylesheet" href="{% static 'registrations/css/registrations.css' %}">{% endblock %}
+
+{% block content %}
+  <section class="registration-section">
+    <article class="ticket-card registration-shell">
+      <p class="registration-kicker">YSSE Social Entrepreneurship Summit</p>
+      <h1>{{ registration.event.event_title }}</h1>
+      {% if ticket_valid %}
+        <p class="ticket-state ticket-valid">Valid ticket</p>
+      {% else %}
+        <p class="ticket-state ticket-invalid">This ticket is not currently valid for entry.</p>
+      {% endif %}
+      <dl class="registration-summary">
+        <div><dt>Participant</dt><dd>{{ registration.full_name }}</dd></div>
+        <div><dt>Pass</dt><dd>{{ registration.pass_name_snapshot }}</dd></div>
+        <div><dt>Date and time</dt><dd>{{ registration.event.event_start_at|date:"l, F j, Y · g:i A" }} Bangladesh time</dd></div>
+        <div><dt>Venue</dt><dd>{{ registration.event.venue|default:"To be announced" }}</dd></div>
+        <div><dt>Ticket reference</dt><dd class="ticket-reference">{{ registration.ticket_reference }}</dd></div>
+      </dl>
+      {% if registration.benefits_snapshot %}
+        <h2>Included benefits</h2>
+        <ul>{% for benefit in registration.included_benefits %}<li>{{ benefit }}</li>{% endfor %}</ul>
+      {% endif %}
+      <p class="registration-privacy">For entry verification, summit staff can check this ticket reference. It contains no contact details.</p>
+      <button class="registration-button print-button" type="button" onclick="window.print()">Print ticket</button>
+    </article>
+  </section>
+{% endblock %}

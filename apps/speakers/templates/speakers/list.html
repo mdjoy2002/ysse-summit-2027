@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Speakers &amp; VVIP Guests | YSSE Summit 2027{% endblock %}
+{% block meta_description %}Meet the published speakers, diplomats, entrepreneurs, panelists and guests of honor for the YSSE Social Entrepreneurship Summit 2027.{% endblock %}
+{% block styles %}<link rel="stylesheet" href="{% static 'speakers/css/speakers.css' %}">{% endblock %}
+
+{% block content %}
+  <section class="speaker-directory-hero" aria-labelledby="speaker-directory-title">
+    <div class="page-shell speaker-directory-hero-inner">
+      <p class="section-kicker">The people shaping change</p>
+      <h1 id="speaker-directory-title">Speakers &amp; <em>VVIP Guests</em></h1>
+      <p>Explore the leaders, practitioners, and changemakers invited to contribute. Each profile clearly shows whether participation is confirmed.</p>
+    </div>
+  </section>
+
+  <section class="speaker-directory section" aria-labelledby="speaker-list-title">
+    <div class="page-shell">
+      <div class="speaker-filter" aria-label="Filter speakers by category">
+        <a class="speaker-filter-chip{% if not active_category %} is-active{% endif %}" href="{% url 'speakers:list' %}"{% if not active_category %} aria-current="page"{% endif %}>All speakers</a>
+        {% for category in categories %}
+          <a class="speaker-filter-chip{% if active_category.pk == category.pk %} is-active{% endif %}" href="{% url 'speakers:list' %}?category={{ category.slug }}"{% if active_category.pk == category.pk %} aria-current="page"{% endif %}>{{ category.name }}</a>
+        {% endfor %}
+      </div>
+
+      <div class="speaker-list-heading">
+        <div>
+          <p class="section-kicker">{% if active_category %}Speaker category{% else %}Summit voices{% endif %}</p>
+          <h2 id="speaker-list-title">{% if active_category %}{{ active_category.name }}{% else %}Meet our speakers{% endif %}</h2>
+        </div>
+        {% if speakers %}<p class="speaker-count">{{ speakers|length }} profile{{ speakers|length|pluralize }}</p>{% endif %}
+      </div>
+
+      {% if speakers %}
+        <div class="speaker-directory-grid">
+          {% for speaker in speakers %}
+            <article class="speaker-directory-card">
+              <a class="speaker-directory-card-link" href="{% url 'speakers:detail' speaker.slug %}" aria-label="View profile for {{ speaker.full_name }}">
+                <div class="speaker-directory-photo">
+                  {% if speaker.profile_image %}
+                    <img src="{{ speaker.profile_image.url }}" alt="Portrait of {{ speaker.full_name }}" loading="lazy">
+                  {% else %}
+                    <span class="speaker-directory-initial" aria-hidden="true">{{ speaker.full_name|first }}</span>
+                    <span class="visually-hidden">No profile image available</span>
+                  {% endif %}
+                </div>
+                <div class="speaker-directory-info">
+                  <span class="speaker-status{% if speaker.participation_status != 'confirmed' %} is-pending{% endif %}">
+                    {% if speaker.participation_status == "confirmed" %}Participation confirmed{% else %}Participation not confirmed{% endif %}
+                  </span>
+                  <h3>{{ speaker.full_name }}</h3>
+                  <p class="speaker-directory-role">{{ speaker.official_designation }}</p>
+                  <p class="speaker-directory-organization">{{ speaker.organization }}</p>
+                  {% if speaker.categories.all %}
+                    <ul class="speaker-category-list" aria-label="Categories">
+                      {% for category in speaker.categories.all %}
+                        {% if category.is_published %}<li>{{ category.name }}</li>{% endif %}
+                      {% endfor %}
+                    </ul>
+                  {% endif %}
+                  <span class="speaker-profile-link">View profile <span aria-hidden="true">↗</span></span>
+                </div>
+              </a>
+            </article>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="speaker-directory-empty">
+          <span aria-hidden="true">✳</span>
+          <h3>{% if active_category %}No published profiles in this category yet.{% else %}Speaker announcements are on the way.{% endif %}</h3>
+          <p>Only profiles approved for publication appear here. Please check back for updates.</p>
+          {% if active_category %}<a class="text-link" href="{% url 'speakers:list' %}">View all speakers <span aria-hidden="true">→</span></a>{% endif %}
+        </div>
+      {% endif %}
+    </div>
+  </section>
+{% endblock %}

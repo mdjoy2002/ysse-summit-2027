@@ -1,0 +1,119 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}Management Dashboard | YSSE Summit 2027{% endblock %}
+{% block dashboard_content %}
+  <section class="dashboard-welcome">
+    <div>
+      <p class="dashboard-section-kicker">At a glance</p>
+      <h2>Summit operations</h2>
+      <p>Current totals from the summit management records you are permitted to view.</p>
+    </div>
+    <a class="dashboard-primary-link" href="{% url 'dashboard:reports' %}">Open reports <span aria-hidden="true">↗</span></a>
+  </section>
+
+  {% if cards %}
+    <section class="dashboard-stat-grid" aria-label="Summit statistics">
+      {% for card in cards %}
+        <article class="dashboard-stat-card tone-{{ card.tone }}">
+          <span class="dashboard-stat-label">{{ card.label }}</span>
+          <strong class="dashboard-stat-value">{{ card.value }}</strong>
+          <span class="dashboard-stat-foot">Live database count</span>
+        </article>
+      {% endfor %}
+    </section>
+  {% else %}
+    <section class="dashboard-empty-state">
+      <h2>No dashboard data permissions</h2>
+      <p>You can open the workspace, but no operational metrics are available to your account. Ask an administrator to grant the appropriate read permissions.</p>
+    </section>
+  {% endif %}
+
+  <section class="dashboard-panel">
+    <div class="dashboard-panel-heading">
+      <div>
+        <p class="dashboard-section-kicker">Pass mix</p>
+        <h2>Registrations by pass category</h2>
+      </div>
+      {% if has_registration_access %}<a href="{% url 'dashboard:records_list' 'registrations' 'registration' %}">Open registrations <span aria-hidden="true">↗</span></a>{% endif %}
+    </div>
+    {% if pass_breakdown %}
+      <div class="dashboard-table-wrap">
+        <table class="dashboard-table">
+          <thead><tr><th scope="col">Pass</th><th scope="col">Category</th><th scope="col">Registrations</th></tr></thead>
+          <tbody>
+            {% for pass in pass_breakdown %}
+              <tr><th scope="row">{{ pass.name }}</th><td>{{ pass.category_display }}</td><td>{{ pass.registration_count }}</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% elif has_registration_access %}
+      <p class="dashboard-empty-inline">No pass categories have been configured.</p>
+    {% else %}
+      <p class="dashboard-empty-inline">Pass totals are hidden because your account does not have registration read access.</p>
+    {% endif %}
+  </section>
+
+  {% if has_registration_access %}
+    <section class="dashboard-panel">
+      <div class="dashboard-panel-heading">
+        <div>
+          <p class="dashboard-section-kicker">Recent activity</p>
+          <h2>Registration records</h2>
+        </div>
+        <span class="dashboard-private-note">No participant contact details are shown here.</span>
+      </div>
+      <form class="dashboard-filter-form" method="get">
+        <div class="dashboard-filter-field"><label for="{{ registration_filter.status.id_for_label }}">Registration status</label>{{ registration_filter.status }}</div>
+        <div class="dashboard-filter-field"><label for="{{ registration_filter.payment_status.id_for_label }}">Payment status</label>{{ registration_filter.payment_status }}</div>
+        <div class="dashboard-filter-field"><label for="{{ registration_filter.pass_category.id_for_label }}">Pass category</label>{{ registration_filter.pass_category }}</div>
+        <div class="dashboard-filter-field"><label for="{{ registration_filter.date_from.id_for_label }}">From</label>{{ registration_filter.date_from }}</div>
+        <div class="dashboard-filter-field"><label for="{{ registration_filter.date_to.id_for_label }}">To</label>{{ registration_filter.date_to }}</div>
+        <button class="dashboard-primary-link" type="submit">Filter records</button>
+        <a class="dashboard-reset-link" href="{% url 'dashboard:overview' %}">Clear filters</a>
+      </form>
+      {% if registration_filter.errors %}
+        <div class="dashboard-form-errors" role="alert">{{ registration_filter.errors }}</div>
+      {% endif %}
+      <div class="dashboard-table-wrap">
+        <table class="dashboard-table">
+          <thead><tr><th scope="col">Reference</th><th scope="col">Pass</th><th scope="col">Registration</th><th scope="col">Payment</th><th scope="col">Submitted</th></tr></thead>
+          <tbody>
+            {% for registration in registration_page %}
+              <tr>
+                <th scope="row"><a href="{% url 'dashboard:records_detail' 'registrations' 'registration' registration.pk %}">{{ registration.reference }}</a></th>
+                <td>{{ registration.pass_name_snapshot }}</td>
+                <td><span class="dashboard-status status-{{ registration.status }}">{{ registration.get_status_display }}</span></td>
+                <td><span class="dashboard-status status-{{ registration.payment_status }}">{{ registration.get_payment_status_display }}</span></td>
+                <td>{{ registration.submitted_at|date:"M j, Y · g:i A" }}</td>
+              </tr>
+            {% empty %}
+              <tr><td class="dashboard-table-empty" colspan="5">No registrations match these filters.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% if registration_page.paginator.num_pages > 1 %}
+        <nav class="dashboard-pagination" aria-label="Registration pages">
+          {% if registration_page.has_previous %}<a href="?{{ request.GET.urlencode }}{% if request.GET %}&amp;{% endif %}page={{ registration_page.previous_page_number }}">Previous</a>{% endif %}
+          <span>Page {{ registration_page.number }} of {{ registration_page.paginator.num_pages }}</span>
+          {% if registration_page.has_next %}<a href="?{{ request.GET.urlencode }}{% if request.GET %}&amp;{% endif %}page={{ registration_page.next_page_number }}">Next</a>{% endif %}
+        </nav>
+      {% endif %}
+    </section>
+  {% endif %}
+
+  <section class="dashboard-panel">
+    <div class="dashboard-panel-heading">
+      <div><p class="dashboard-section-kicker">Your workspace</p><h2>Management shortcuts</h2></div>
+      <a href="{% url 'dashboard:records_index' %}">Browse all permitted records <span aria-hidden="true">↗</span></a>
+    </div>
+    <div class="dashboard-shortcut-grid">
+      {% for shortcut in shortcuts %}
+        <a class="dashboard-shortcut" href="{{ shortcut.url }}"><strong>{{ shortcut.label }} <span aria-hidden="true">↗</span></strong><span>{{ shortcut.description }}</span></a>
+      {% empty %}
+        <p class="dashboard-empty-inline">No management shortcuts are available to your account.</p>
+      {% endfor %}
+    </div>
+  </section>
+{% endblock %}

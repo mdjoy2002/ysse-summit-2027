@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Demo Payment | YSSE Summit 2027{% endblock %}
+{% block styles %}<link rel="stylesheet" href="{% static 'registrations/css/registrations.css' %}">{% endblock %}
+
+{% block content %}
+  <section class="registration-section">
+    <div class="registration-shell registration-result">
+      <p class="registration-kicker">Local development only</p>
+      <h1>Demo payment checkout</h1>
+      <p class="payment-unavailable-note" role="note">This is a simulated checkout. No bKash, Nagad, Rocket, card, or other real payment is processed.</p>
+      <dl class="registration-summary">
+        <div><dt>Registration reference</dt><dd>{{ payment.registration.reference }}</dd></div>
+        <div><dt>Payment method</dt><dd>{{ payment.get_method_display }} (demo)</dd></div>
+        <div><dt>Amount</dt><dd>{{ payment.currency }} {{ payment.amount|floatformat:2 }}</dd></div>
+        <div><dt>Demo attempt</dt><dd>{{ payment.reference }}</dd></div>
+      </dl>
+      {% if payment.status == "pending" %}
+        <p>Select a simulated result to test the registration workflow:</p>
+        <form method="post">
+          {% csrf_token %}
+          <button class="registration-button" type="submit" name="result" value="success">Simulate successful payment</button>
+          <button class="registration-button" type="submit" name="result" value="failed">Simulate failed payment</button>
+          <button class="registration-button" type="submit" name="result" value="cancelled">Simulate cancellation</button>
+        </form>
+      {% else %}
+        <p>This demo attempt is {{ payment.get_status_display|lower }} and can no longer be changed.</p>
+      {% endif %}
+      <a class="registration-text-link" href="{% url 'registrations:detail' payment.registration.reference %}">Return to registration</a>
+    </div>
+  </section>
+{% endblock %}

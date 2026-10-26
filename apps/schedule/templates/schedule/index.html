@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Event Schedule | {{ event.event_title }}{% endblock %}
+{% block meta_description %}View the editable agenda for the YSSE Social Entrepreneurship Summit 2027 in Bangladesh time.{% endblock %}
+{% block styles %}<link rel="stylesheet" href="{% static 'schedule/css/schedule.css' %}">{% endblock %}
+
+{% block content %}
+  <section class="schedule-hero" aria-labelledby="schedule-title">
+    <div class="page-shell schedule-hero-inner">
+      <p class="section-kicker">A day for ideas and impact</p>
+      <h1 id="schedule-title">Summit <em>Schedule</em></h1>
+      <p>{{ event.event_title }}{% if event.event_start_at %} · {{ event.event_start_at|date:"l, F j, Y" }}{% endif %} · Bangladesh time</p>
+      {% if event.venue %}<p class="schedule-hero-venue">{{ event.venue }}</p>{% endif %}
+    </div>
+  </section>
+
+  <section class="schedule-section section" aria-labelledby="agenda-title">
+    <div class="page-shell">
+      <div class="schedule-intro">
+        <div>
+          <p class="section-kicker">Plan your summit day</p>
+          <h2 id="agenda-title">The agenda</h2>
+        </div>
+        <p>Session times and locations may be updated by the event team. Times are shown in Bangladesh time.</p>
+      </div>
+
+      {% if sessions %}
+        <ol class="schedule-timeline">
+          {% for session in sessions %}
+            <li class="schedule-item">
+              <time class="schedule-time" datetime="{{ session.starts_at|date:'c' }}">
+                <span>{{ session.starts_at|date:"h:i" }}</span>
+                <small>{{ session.starts_at|date:"A" }}</small>
+              </time>
+              <article class="schedule-card">
+                <span class="schedule-card-marker" aria-hidden="true"></span>
+                <div class="schedule-card-heading">
+                  <h3>{{ session.title }}</h3>
+                  {% if session.ends_at %}
+                    <p class="schedule-time-range">{{ session.starts_at|date:"g:i A" }}–{{ session.ends_at|date:"g:i A" }}</p>
+                  {% endif %}
+                </div>
+                {% if session.description %}<p class="schedule-description">{{ session.description|linebreaksbr }}</p>{% endif %}
+                <div class="schedule-meta">
+                  {% if session.venue %}<span class="schedule-meta-item"><span aria-hidden="true">⌖</span>{{ session.venue }}</span>{% endif %}
+                  {% if session.speaker and session.speaker.is_published and session.speaker.categories.all %}
+                    <a class="schedule-meta-item schedule-speaker" href="{% url 'speakers:detail' session.speaker.slug %}">
+                      {% if session.speaker.profile_image %}<img src="{{ session.speaker.profile_image.url }}" alt="" loading="lazy">{% endif %}
+                      {{ session.speaker.full_name }} · {{ session.speaker.official_designation }}
+                    </a>
+                  {% endif %}
+                  {% if session.competition and session.competition.is_published %}
+                    <a class="schedule-competition-link" href="{% url 'competitions:detail' session.competition.slug %}">
+                      {{ session.competition.name }} <span aria-hidden="true">↗</span>
+                    </a>
+                  {% endif %}
+                </div>
+              </article>
+            </li>
+          {% endfor %}
+        </ol>
+      {% else %}
+        <div class="schedule-empty">
+          <span aria-hidden="true">◷</span>
+          <h3>The detailed schedule is being prepared.</h3>
+          <p>Published sessions will appear here as the agenda is confirmed.</p>
+        </div>
+      {% endif %}
+    </div>
+  </section>
+{% endblock %}

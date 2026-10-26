@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Partners &amp; Sponsors | YSSE Summit 2027{% endblock %}
+{% block meta_description %}Meet the published partners and sponsors of the YSSE Social Entrepreneurship Summit 2027, and learn how your organization can get involved.{% endblock %}
+{% block styles %}<link rel="stylesheet" href="{% static 'partners/css/partners.css' %}">{% endblock %}
+
+{% block content %}
+  <section class="partners-hero" aria-labelledby="partners-title">
+    <div class="page-shell partners-hero-inner">
+      <p class="section-kicker">Building impact together</p>
+      <h1 id="partners-title">Partners &amp; <em>Sponsors</em></h1>
+      <p>Organizations that help make a platform for youth-led social business possible.</p>
+      {% if settings.sponsorship_deck %}
+        <a class="button button-primary" href="{% url 'partners:deck' %}">Download sponsorship deck <span aria-hidden="true">↓</span></a>
+      {% endif %}
+    </div>
+  </section>
+
+  <section class="partners-directory section" aria-labelledby="partners-directory-title">
+    <div class="page-shell">
+      <div class="partners-section-heading">
+        <div>
+          <p class="section-kicker">Our ecosystem</p>
+          <h2 id="partners-directory-title">Recognizing our partners</h2>
+        </div>
+        <p>Only organizations confirmed and published by the summit team are displayed here.</p>
+      </div>
+
+      {% if categories %}
+        <div class="sponsor-tiers">
+          {% for category in categories %}
+            {% with sponsors=category.sponsors.all %}
+              {% if sponsors %}
+                <section class="sponsor-tier" aria-labelledby="sponsor-tier-{{ category.pk }}">
+                  <div class="sponsor-tier-heading">
+                    <span aria-hidden="true"></span>
+                    <h3 id="sponsor-tier-{{ category.pk }}">{{ category.name }}</h3>
+                    {% if category.description %}<p>{{ category.description }}</p>{% endif %}
+                  </div>
+                  <div class="sponsor-grid">
+                    {% for sponsor in sponsors %}
+                      {% if sponsor.is_published %}
+                        <article class="sponsor-card">
+                          {% if sponsor.website_url %}<a class="sponsor-card-link" href="{{ sponsor.website_url }}" target="_blank" rel="noopener noreferrer">{% endif %}
+                            <img class="sponsor-logo" src="{{ sponsor.logo.url }}" alt="{{ sponsor.organization_name }} logo" loading="lazy">
+                            <h4>{{ sponsor.organization_name }}</h4>
+                            {% if sponsor.description %}<p>{{ sponsor.description }}</p>{% endif %}
+                            {% if sponsor.website_url %}<span class="sponsor-website">Visit website <span aria-hidden="true">↗</span></span>{% endif %}
+                          {% if sponsor.website_url %}</a>{% endif %}
+                        </article>
+                      {% endif %}
+                    {% endfor %}
+                  </div>
+                </section>
+              {% endif %}
+            {% endwith %}
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="partners-empty">
+          <span aria-hidden="true">✳</span>
+          <h3>Partnership announcements are coming soon.</h3>
+          <p>Confirmed sponsors will appear here once the summit team publishes their profiles.</p>
+        </div>
+      {% endif %}
+    </div>
+  </section>
+
+  <section class="sponsor-callout" aria-labelledby="sponsor-callout-title">
+    <div class="page-shell sponsor-callout-inner">
+      <div>
+        <p class="section-kicker">Join the movement</p>
+        <h2 id="sponsor-callout-title">Let’s create meaningful impact together.</h2>
+        <p>Explore sponsorship and partnership opportunities with the YSSE Social Entrepreneurship Summit 2027.</p>
+      </div>
+      {% if settings.sponsorship_deck %}
+        <a class="button button-outline" href="{% url 'partners:deck' %}">View sponsorship deck <span aria-hidden="true">↗</span></a>
+      {% endif %}
+    </div>
+  </section>
+
+  <section class="partnership-inquiry section" id="partnership-inquiry" aria-labelledby="inquiry-title">
+    <div class="page-shell inquiry-layout">
+      <div class="inquiry-copy">
+        <p class="section-kicker">Start a conversation</p>
+        <h2 id="inquiry-title">Interested in partnering?</h2>
+        <p>{% if settings.inquiry_intro %}{{ settings.inquiry_intro }}{% else %}Tell us how your organization would like to support the summit.{% endif %}</p>
+        <p class="inquiry-privacy">We use these details only to review and respond to your inquiry. Submitting this form does not confirm or approve a partnership.</p>
+      </div>
+
+      <form class="inquiry-form" method="post" action="{% url 'partners:index' %}#partnership-inquiry">
+        {% csrf_token %}
+        {% if form.non_field_errors %}<div class="form-errors" role="alert">{{ form.non_field_errors }}</div>{% endif %}
+        <div class="honeypot-field" aria-hidden="true">
+          {{ form.website.label_tag }}{{ form.website }}
+        </div>
+        <div class="inquiry-field">
+          {{ form.organization_name.label_tag }}
+          {{ form.organization_name }}
+          {{ form.organization_name.errors }}
+        </div>
+        <div class="inquiry-field">
+          {{ form.contact_name.label_tag }}
+          {{ form.contact_name }}
+          {{ form.contact_name.errors }}
+        </div>
+        <div class="inquiry-field">
+          {{ form.business_email.label_tag }}
+          {{ form.business_email }}
+          {{ form.business_email.errors }}
+        </div>
+        <div class="inquiry-field">
+          {{ form.phone_number.label_tag }}
+          {{ form.phone_number }}
+          {{ form.phone_number.errors }}
+        </div>
+        <div class="inquiry-field">
+          {{ form.interest.label_tag }}
+          {{ form.interest }}
+          {{ form.interest.errors }}
+        </div>
+        <div class="inquiry-field">
+          {{ form.message.label_tag }}
+          {{ form.message }}
+          {{ form.message.errors }}
+        </div>
+        <div class="inquiry-consent">
+          {{ form.consent_given }}
+          <label for="{{ form.consent_given.id_for_label }}">I agree that the summit team may use these details to review and respond to this partnership inquiry.</label>
+          {{ form.consent_given.errors }}
+        </div>
+        <button class="button button-primary" type="submit">Send partnership inquiry <span aria-hidden="true">↗</span></button>
+      </form>
+    </div>
+  </section>
+{% endblock %}

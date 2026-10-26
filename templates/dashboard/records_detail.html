@@ -1,0 +1,38 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}{{ object_title }} | YSSE Summit 2027{% endblock %}
+{% block dashboard_title %}Record details{% endblock %}
+{% block dashboard_content %}
+  <section class="dashboard-welcome">
+    <div>
+      <p class="dashboard-section-kicker">Managed record</p>
+      <h2>{{ object_title }}</h2>
+      <p>Read-only details shown according to the fields configured for this management section.</p>
+    </div>
+    <div class="dashboard-record-actions">
+      {% if can_change %}<a class="dashboard-primary-link" href="{{ edit_url }}">Edit record</a>{% endif %}
+      {% if can_delete %}<a class="dashboard-danger-link" href="{{ delete_url }}">Delete record</a>{% endif %}
+      <a class="dashboard-secondary-link" href="{{ list_url }}">Back to {{ model_name }}</a>
+    </div>
+  </section>
+
+  {% regroup object_fields by fieldset as fieldsets %}
+  {% for fieldset in fieldsets %}
+    <section class="dashboard-panel dashboard-detail-panel">
+      {% if fieldset.grouper %}<h2>{{ fieldset.grouper }}</h2>{% endif %}
+      <dl class="dashboard-detail-grid">
+        {% for field in fieldset.list %}
+          <div class="dashboard-detail-field">
+            <dt>{{ field.label }}</dt>
+            <dd>{{ field.value }}</dd>
+          </div>
+        {% endfor %}
+      </dl>
+    </section>
+  {% empty %}
+    <section class="dashboard-empty-state">
+      <h2>No display fields configured</h2>
+      <p>This record type has no fields configured for display in the management interface.</p>
+    </section>
+  {% endfor %}
+{% endblock %}

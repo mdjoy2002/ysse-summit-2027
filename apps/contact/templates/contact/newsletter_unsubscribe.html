@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Unsubscribe | YSSE Summit 2027{% endblock %}
+{% block styles %}<link rel="stylesheet" href="{% static 'contact/css/contact.css' %}">{% endblock %}
+
+{% block content %}
+  <section class="info-section">
+    <div class="info-shell">
+      <div class="info-card newsletter-result">
+        <p class="info-eyebrow">Newsletter preferences</p>
+        <h1>Confirm unsubscribe</h1>
+        <p>Confirm below to stop receiving Summit newsletter updates at this address.</p>
+        <form method="post">
+          {% csrf_token %}
+          <button class="info-button" type="submit">Unsubscribe</button>
+        </form>
+      </div>
+    </div>
+  </section>
+{% endblock %}
