@@ -30,6 +30,7 @@ from .services import (
     log_report_export,
     report_rows,
 )
+from .support import DEVELOPER_SUPPORT
 
 
 REGISTRATION_PAGE_SIZE = 20
@@ -91,6 +92,20 @@ def overview(request):
             REGISTRATION_PAGE_SIZE,
         ).get_page(request.GET.get("page"))
     return render(request, "dashboard/overview.html", context)
+
+
+@dashboard_login_required
+def support(request):
+    """Show the code-configured developer contact details."""
+    _require_dashboard_access(request)
+    return render(
+        request,
+        "dashboard/support.html",
+        {
+            "developer_support": DEVELOPER_SUPPORT,
+            "shortcuts": dashboard_shortcuts(request.user, request),
+        },
+    )
 
 
 @dashboard_login_required

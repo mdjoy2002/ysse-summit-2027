@@ -17,6 +17,7 @@
         <div>
           <p class="dashboard-section-kicker">Managed section</p>
           <h2>{{ app.label }}</h2>
+          <p>{{ app.description }}</p>
         </div>
         <span class="dashboard-record-count">{{ app.models|length }} record types</span>
       </div>
@@ -26,6 +27,7 @@
             <span class="dashboard-record-card-icon" aria-hidden="true">{{ model.name|first|upper }}</span>
             <span class="dashboard-record-card-copy">
               <strong>{{ model.name }}</strong>
+              <span>{{ model.description }}</span>
               {% if model.count != None %}<span>{{ model.count }} record{{ model.count|pluralize }}</span>{% else %}<span>Creation access</span>{% endif %}
             </span>
             <span class="dashboard-record-arrow" aria-hidden="true">↗</span>

@@ -1,0 +1,66 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}Developer support | YSSE Summit 2027{% endblock %}
+{% block dashboard_title %}Developer support{% endblock %}
+{% block dashboard_content %}
+  <section class="dashboard-support-hero">
+    <div class="dashboard-support-orbit dashboard-support-orbit-one" aria-hidden="true"></div>
+    <div class="dashboard-support-orbit dashboard-support-orbit-two" aria-hidden="true"></div>
+    <div class="dashboard-support-intro">
+      <p class="dashboard-support-eyebrow"><span aria-hidden="true"></span> Here to help</p>
+      <h2>Need a hand with the Summit platform?</h2>
+      <p>Reach out directly for help with the website, registrations, or Admin Panel 2.</p>
+    </div>
+    <div class="dashboard-support-profile">
+      <span class="dashboard-support-avatar" aria-hidden="true">{{ developer_support.initials }}</span>
+      <span class="dashboard-support-profile-copy">
+        <strong>{{ developer_support.name }}</strong>
+        <span>{{ developer_support.role }}</span>
+      </span>
+      <span class="dashboard-support-verified" title="Official developer contact" aria-label="Official developer contact">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg>
+      </span>
+    </div>
+  </section>
+
+  <section class="dashboard-support-section" aria-labelledby="support-options-title">
+    <div class="dashboard-support-section-heading">
+      <div>
+        <p class="dashboard-section-kicker">Direct contact</p>
+        <h2 id="support-options-title">Choose how to connect</h2>
+      </div>
+      <span class="dashboard-support-section-note">Official developer channels</span>
+    </div>
+    <div class="dashboard-support-grid">
+      {% for contact in developer_support.contacts %}
+        <a
+          class="dashboard-support-contact dashboard-support-contact-{{ contact.icon }}"
+          href="{{ contact.href }}"
+          {% if contact.icon == "facebook" or contact.icon == "whatsapp" %}target="_blank" rel="noopener noreferrer"{% endif %}
+        >
+          <span class="dashboard-support-contact-icon" aria-hidden="true">
+            {% if contact.icon == "email" %}
+              <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/></svg>
+            {% elif contact.icon == "phone" %}
+              <svg viewBox="0 0 24 24"><path d="M7 3h3l2 5-2.2 1.5a15 15 0 0 0 4.7 4.7L16 12l5 2v3a3 3 0 0 1-3.2 3A17 17 0 0 1 4 6.2 3 3 0 0 1 7 3Z"/></svg>
+            {% elif contact.icon == "whatsapp" %}
+              <svg viewBox="0 0 24 24"><path d="M20 11.6a8 8 0 0 1-11.8 7L4 20l1.4-4.1A8 8 0 1 1 20 11.6Z"/><path d="M9 8.5c.3-.6.6-.6.9-.6h.5c.2 0 .4.1.5.4l.7 1.7c.1.2 0 .4-.1.6l-.6.7c-.2.2-.2.4 0 .6.5.9 1.3 1.6 2.2 2 .2.1.4.1.6-.1l.8-.9c.2-.2.4-.2.6-.1l1.6.8c.2.1.3.3.3.5 0 .4-.2 1.1-.7 1.5-.5.4-1.1.6-1.8.5-1.1-.2-2.6-.9-4-2.1-1.2-1.1-2-2.5-2.2-3.5-.2-.9.2-1.6.7-2Z"/></svg>
+            {% elif contact.icon == "facebook" %}
+              <svg viewBox="0 0 24 24"><path d="M14 21v-8h3l.5-3H14V8.2c0-.9.3-1.5 1.6-1.5h2V4a24 24 0 0 0-2.8-.2c-2.8 0-4.7 1.7-4.7 4.8V10H7v3h3v8z"/></svg>
+            {% endif %}
+          </span>
+          <span class="dashboard-support-contact-copy">
+            <span class="dashboard-support-contact-label">{{ contact.label }}</span>
+            <strong>{{ contact.value }}</strong>
+            <span class="dashboard-support-contact-hint">{{ contact.hint }}</span>
+          </span>
+          <span class="dashboard-support-contact-arrow" aria-hidden="true">↗</span>
+        </a>
+      {% endfor %}
+    </div>
+    <p class="dashboard-support-footnote">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5m0-8h.01"/></svg>
+      These developer contact details are maintained in the application code.
+    </p>
+  </section>
+{% endblock %}

@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Choose Payment Method | YSSE Summit 2027{% endblock %}
+{% block styles %}<link rel="stylesheet" href="{% static 'registrations/css/registrations.css' %}">{% endblock %}
+
+{% block content %}
+  <section class="registration-section">
+    <div class="registration-shell registration-result payment-method-page">
+      <p class="registration-kicker">
+        {% if registration %}
+          Registration {{ registration.reference }}
+        {% else %}
+          Complete your registration
+        {% endif %}
+      </p>
+      <h1>Choose your payment method</h1>
+      <div class="payment-amount-card">
+        <span>Amount to send</span>
+        {% if registration %}
+          <strong>৳ {{ registration.amount_due|floatformat:2 }}</strong>
+        {% else %}
+          <strong>৳ {{ amount_due|floatformat:2 }}</strong>
+        {% endif %}
+      </div>
+      {% if payment_options %}
+        <p class="payment-method-intro">Send the exact amount to one of the official merchant numbers below. Select the service you used, then enter your transaction ID and upload the payment screenshot.</p>
+        <form class="payment-checkout-form payment-method-choice-form" method="post">
+          {% csrf_token %}
+          <fieldset class="payment-choice-list">
+            <legend>Select the payment service you used</legend>
+            <ol class="payment-choice-list">
+              {% for method, label, number in payment_options %}
+                <li class="payment-choice-item">
+                  <label class="payment-choice" for="mobile-payment-{{ method }}">
+                    <input
+                      id="mobile-payment-{{ method }}"
+                      type="radio"
+                      name="method"
+                      value="{{ method }}"
+                      required
+                    >
+                    <span class="payment-choice-step" aria-hidden="true">{{ forloop.counter|stringformat:"02d" }}</span>
+                    <span class="payment-choice-copy">
+                      <span class="payment-choice-heading">
+                        <span class="payment-brand payment-brand-{{ method }}" aria-hidden="true">{{ label }}</span>
+                        <strong>{{ label }}</strong>
+                      </span>
+                      <span class="payment-choice-number-label">Official merchant number</span>
+                      <bdi class="payment-choice-number">{{ number }}</bdi>
+                    </span>
+                    <span class="payment-choice-indicator" aria-hidden="true"></span>
+                  </label>
+                </li>
+              {% endfor %}
+            </ol>
+          </fieldset>
+          <button class="registration-button payment-continue-button" type="submit">Continue to transaction details <span aria-hidden="true">&rarr;</span></button>
+        </form>
+      {% else %}
+        <p class="payment-unavailable-note" role="status">The summit team has not configured any official bKash, Nagad, or Rocket numbers yet. Please do not send money. You can track your registration from the Track registration link.</p>
+      {% endif %}
+      <a class="registration-text-link" href="{% url 'registrations:track' %}">Track your registration</a>
+    </div>
+  </section>
+{% endblock %}

@@ -18,39 +18,37 @@
         <div><dt>Date and time</dt><dd>{{ registration.event.event_start_at|date:"l, F j, Y · g:i A" }} Bangladesh time</dd></div>
         <div><dt>Venue</dt><dd>{{ registration.event.venue|default:"To be announced" }}</dd></div>
       </dl>
-      {% if registration.amount_due > 0 and registration.payment_status != "paid" and registration.payment_status != "refunded" %}
+      {% if registration.status == "rejected" %}
+        <section class="payment-panel" aria-labelledby="registration-decision-title">
+          <div class="payment-panel-heading">
+            <p class="registration-kicker">Registration decision</p>
+            <h2 id="registration-decision-title">Registration not approved</h2>
+          </div>
+          {% if registration.status_audit_note %}
+            <p>{{ registration.status_audit_note }}</p>
+          {% else %}
+            <p>Please check your email for the review comment and next steps.</p>
+          {% endif %}
+        </section>
+      {% endif %}
+      {% if registration.status == "pending" and registration.amount_due > 0 and registration.payment_status != "paid" and registration.payment_status != "refunded" %}
         <section class="payment-panel" aria-labelledby="payment-panel-title">
           <div class="payment-panel-heading">
             <p class="registration-kicker">Registration payment</p>
-            <h2 id="payment-panel-title">Choose a payment method</h2>
+            <h2 id="payment-panel-title">Payment is waiting for submission</h2>
             <p>Amount due: <strong>৳ {{ registration.amount_due|floatformat:2 }}</strong></p>
           </div>
-          <ul class="payment-method-list" aria-label="Payment method availability">
-            {% for method in planned_payment_methods %}
-              <li class="payment-method{% if method.available %} is-available{% else %} is-unavailable{% endif %}">
-                <span>{{ method.label }}</span>
-                <span class="payment-method-status">
-                  {% if method.available %}{% if demo_payment_mode %}Demo available{% else %}Available{% endif %}{% else %}Not configured{% endif %}
-                </span>
-              </li>
-            {% endfor %}
-          </ul>
-          {% if payment_methods %}
-            <form class="payment-checkout-form" method="post" action="{% url 'payments:start' registration.reference %}">
-              {% csrf_token %}
-              <label for="payment-method">Select method</label>
-              <select id="payment-method" name="method" required>
-                {% for value, label in payment_methods %}<option value="{{ value }}">{{ label }}</option>{% endfor %}
-              </select>
-              <button class="registration-button" type="submit">{% if demo_payment_mode %}Open demo checkout{% else %}Continue to secure checkout{% endif %}</button>
-            </form>
-            {% if demo_payment_mode %}
-              <p class="payment-unavailable-note" role="note">Development demo only: choose a simulated result on the next page. No real payment is made and this mode must not be used in production.</p>
-            {% else %}
-              <p class="payment-security-note">Payment confirmation is verified by the payment provider. Returning from checkout alone does not confirm payment.</p>
+          {% if registration.payment_submitted_at %}
+            <p class="registration-notice" role="status">Payment details submitted {{ registration.payment_submitted_at|date:"M j, Y g:i A" }}. Your payment is awaiting administrator verification.</p>
+            <p>{{ registration.get_manual_payment_method_display }} transaction ID: <strong>{{ registration.payment_transaction_id }}</strong></p>
+            {% if registration.payment_proof %}
+              <p><a class="registration-text-link" href="{% url 'registrations:payment-proof' registration.reference %}">Download submitted payment screenshot</a></p>
             {% endif %}
           {% else %}
-            <p class="payment-unavailable-note" role="status">Online checkout is not active yet. The organizer must configure an approved payment provider and merchant credentials. Do not send payment details through this website until checkout is enabled.</p>
+            <p>Your registration has been received. Continue to mobile payment to select bKash, Nagad, or Rocket and submit the transaction ID and payment screenshot.</p>
+            {% if registration.status == "pending" and registration.payment_status != "paid" %}
+              <a class="registration-button" href="{% url 'registrations:payment-method' registration.reference %}">Continue to payment</a>
+            {% endif %}
           {% endif %}
         </section>
       {% endif %}
@@ -60,7 +58,7 @@
       {% endif %}
       {% if registration.ticket_is_valid %}
         <a class="registration-button" href="{% url 'registrations:ticket' registration.ticket_reference %}">View and print ticket <span aria-hidden="true">↗</span></a>
-      {% else %}
+      {% elif registration.status != "rejected" %}
         <p>Your ticket will be available after the registration is confirmed under the summit's payment and approval rules.</p>
       {% endif %}
       <a class="registration-text-link" href="{% url 'registrations:history' %}">View my registrations</a>

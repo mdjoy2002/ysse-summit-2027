@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Submit Payment | YSSE Summit 2027{% endblock %}
+{% block styles %}<link rel="stylesheet" href="{% static 'registrations/css/registrations.css' %}">{% endblock %}
+
+{% block content %}
+  <section class="registration-section">
+    <div class="registration-shell registration-result">
+      <p class="registration-kicker">Registration {{ registration.reference }}</p>
+      <h1>Send payment with {{ payment_method }}</h1>
+      <dl class="registration-summary">
+        <div><dt>Amount due</dt><dd>৳ {{ registration.amount_due|floatformat:2 }}</dd></div>
+        <div><dt>Send to {{ payment_method }}</dt><dd><strong>{{ payment_number }}</strong></dd></div>
+      </dl>
+      <p>After sending the exact amount, submit the transaction ID and screenshot. Your payment remains pending until the summit team verifies it.</p>
+      <form class="payment-checkout-form" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.manual_payment_method }}
+        {{ form.non_field_errors }}
+        {% for field in form %}
+          {% if field.name != "manual_payment_method" %}
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+            {% for error in field.errors %}<p class="field-error" role="alert">{{ error }}</p>{% endfor %}
+          {% endif %}
+        {% endfor %}
+        <button class="registration-button" type="submit">Submit payment details</button>
+      </form>
+    </div>
+  </section>
+{% endblock %}

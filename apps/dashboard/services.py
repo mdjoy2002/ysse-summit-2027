@@ -21,6 +21,61 @@ from apps.schedule.models import ScheduleSession
 
 logger = logging.getLogger("ysse.dashboard")
 
+DASHBOARD_APP_DESCRIPTIONS = {
+    "about": "Edit the Summit story, impact, and organizational information.",
+    "auth": "Manage staff accounts, roles, and access permissions.",
+    "competitions": "Configure competitions and review participant submissions.",
+    "contact": "Manage visitor inquiries and public information.",
+    "home": "Update homepage event details and featured content.",
+    "partners": "Manage sponsor profiles, partnership requests, and resources.",
+    "payments": "Review payment transactions and provider audit events.",
+    "registrations": "Configure passes and manage attendee registration records.",
+    "schedule": "Create and publish sessions in the Summit agenda.",
+    "speakers": "Manage speaker profiles and speaker categories.",
+}
+
+DASHBOARD_MODEL_DESCRIPTIONS = {
+    ("about", "foundervision"): "Edit the founder's message and its publication status.",
+    ("about", "impactstatistic"): "Maintain verified impact figures shown on the About page.",
+    ("about", "timelineperiod"): "Organize published history periods and their milestones.",
+    ("about", "yssewing"): "Manage YSSE initiative cards and their display order.",
+    ("auth", "group"): "Create permission groups and assign staff access.",
+    ("auth", "user"): "Manage staff accounts, account status, and permissions.",
+    ("competitions", "competition"): "Configure competition details, dates, and entry requirements.",
+    ("competitions", "competitionsubmission"): "Review and update participant competition entries.",
+    ("contact", "contactinquiry"): "Review and respond to private messages from visitors.",
+    ("contact", "faq"): "Edit, order, and publish answers to common questions.",
+    ("contact", "legaldocument"): "Review and publish the site's privacy and terms documents.",
+    ("contact", "newslettersubscription"): "Review newsletter subscription and consent status.",
+    ("contact", "pressrelease"): "Write and publish Summit news and press releases.",
+    ("contact", "publicinformationsettings"): "Update the Summit's official contact and social links.",
+    ("home", "announcement"): "Publish, unpublish, or archive homepage announcements.",
+    ("home", "homehighlight"): "Manage homepage highlights, ordering, and visibility.",
+    ("home", "summitevent"): "Update the Summit's core event information and homepage settings.",
+    ("partners", "partnershipinquiry"): "Review incoming partnership requests and record follow-up.",
+    ("partners", "partnershipsettings"): "Manage partnership information and the sponsorship deck.",
+    ("partners", "sponsor"): "Maintain sponsor profiles and control their public visibility.",
+    ("partners", "sponsorcategory"): "Organize sponsor tiers and their display order.",
+    ("payments", "paymentevent"): "Inspect provider payment callback and audit events.",
+    ("payments", "paymenttransaction"): "Review payment transaction status and provider references.",
+    ("registrations", "paymentsettings"): "Configure the mobile payment numbers shown at checkout.",
+    ("registrations", "passtype"): "Set pass prices, benefits, capacity, and sale availability.",
+    ("registrations", "registration"): "Review attendee details, payment status, and registration decisions.",
+    ("registrations", "registrationemailsettings"): "Edit the confirmation and rejection emails sent to participants.",
+    ("schedule", "schedulesession"): "Create, order, and publish Summit agenda sessions.",
+    ("speakers", "featuredspeaker"): "Edit speaker biographies, profiles, and publication status.",
+    ("speakers", "speakercategory"): "Organize speaker categories and their display order.",
+}
+
+
+def _dashboard_model_description(model):
+    """Describe the purpose of a registered model in the custom dashboard."""
+    return DASHBOARD_MODEL_DESCRIPTIONS.get(
+        (model._meta.app_label, model._meta.model_name),
+        f"Manage {model._meta.verbose_name_plural.lower()} records.",
+    )
+
+
 def admin_model_catalog(request):
     """Return registered Django Admin models and allowed management actions."""
     catalog = {}
@@ -37,11 +92,16 @@ def admin_model_catalog(request):
             model._meta.app_label,
             {
                 "label": app_config.verbose_name,
+                "description": DASHBOARD_APP_DESCRIPTIONS.get(
+                    model._meta.app_label,
+                    f"Manage {app_config.verbose_name.lower()} records.",
+                ),
                 "models": [],
             },
         )["models"].append(
             {
                 "name": model._meta.verbose_name_plural,
+                "description": _dashboard_model_description(model),
                 "count": (
                     model_admin.get_queryset(request).count()
                     if can_view
@@ -124,7 +184,8 @@ def dashboard_shortcuts(user, request=None):
             shortcuts.append(
                 {
                     "label": model._meta.verbose_name_plural,
-                    "description": apps.get_app_config(
+                    "description": _dashboard_model_description(model),
+                    "section": apps.get_app_config(
                         model._meta.app_label
                     ).verbose_name,
                     "url": reverse(

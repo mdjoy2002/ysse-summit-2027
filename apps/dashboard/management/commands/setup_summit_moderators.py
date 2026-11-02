@@ -9,6 +9,8 @@ from apps.dashboard.access import MODERATOR_GROUP_NAME
 MODERATOR_PERMISSIONS = (
     ("registrations", "view_registration"),
     ("registrations", "view_passtype"),
+    ("registrations", "view_paymentsettings"),
+    ("registrations", "change_paymentsettings"),
     ("registrations", "manage_registration_status"),
     ("competitions", "view_competition"),
     ("competitions", "view_competitionsubmission"),

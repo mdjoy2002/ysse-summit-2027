@@ -61,6 +61,7 @@
 
 .hero .eyebrow {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 0.65rem;
   color: var(--lime);
@@ -183,6 +184,31 @@
   backdrop-filter: blur(16px);
 }
 
+.countdown-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.35rem;
+}
+
+.countdown-heading h2 {
+  margin: 0.5rem 0 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.45rem, 2.5vw, 1.8rem);
+  font-weight: 500;
+}
+
+.countdown-anniversary-logo {
+  width: clamp(5.5rem, 10vw, 8rem);
+  height: auto;
+  flex: 0 0 auto;
+  border: 3px solid rgb(255 255 255 / 90%);
+  border-radius: 0.8rem;
+  background: #fff;
+  box-shadow: 0 0.5rem 1.5rem rgb(0 0 0 / 18%);
+}
+
 .countdown-kicker {
   margin: 0;
   color: #d3e5ca;
@@ -190,13 +216,6 @@
   font-weight: 700;
   letter-spacing: 0.13em;
   text-transform: uppercase;
-}
-
-.countdown-card h2 {
-  margin: 0.5rem 0 1.5rem;
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: 1.8rem;
-  font-weight: 500;
 }
 
 .countdown {
@@ -764,13 +783,13 @@
   }
 
   .hero-content {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: 2rem;
     padding-block: 5rem 5.5rem;
   }
 
   .hero h1 {
-    font-size: clamp(3rem, 14vw, 4.8rem);
+    font-size: clamp(2.3rem, 11.8vw, 4.8rem);
   }
 
   .hero-actions {
@@ -784,7 +803,13 @@
   }
 
   .countdown-card {
+    width: 100%;
     max-width: 420px;
+    min-width: 0;
+  }
+
+  .countdown-anniversary-logo {
+    width: 5rem;
   }
 
   .hero-scroll {

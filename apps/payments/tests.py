@@ -8,13 +8,14 @@ import uuid
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Permission
+from django.core import mail
 from django.db import IntegrityError, transaction
 from django.test import TestCase, override_settings
 from django.urls import reverse
 from django.utils import timezone
 
 from apps.home.models import SummitEvent
-from apps.registrations.models import PassType, Registration
+from apps.registrations.models import PaymentSettings, PassType, Registration
 from apps.registrations.services import verify_payment
 from apps.registrations.tests import RegistrationFixture
 
@@ -136,6 +137,7 @@ class PaymentWorkflowTests(TestCase):
     @override_settings(
         DEBUG=True,
         PAYMENT_PROVIDER_CLASS="apps.payments.providers.demo.DemoProvider",
+        PAYMENT_DEMO_ENABLED=True,
         PUBLIC_BASE_URL="",
     )
     def test_development_demo_checkout_simulates_success_without_gateway(self):
@@ -200,6 +202,14 @@ class PaymentWorkflowTests(TestCase):
     def test_guest_can_complete_demo_payment_and_open_bearer_ticket(self):
         event = SummitEvent.objects.get(key=SummitEvent.Key.MAIN)
         pass_type = PassType.objects.get(category=PassType.Category.GENERAL)
+        PaymentSettings.objects.update_or_create(
+            key=PaymentSettings.Key.MAIN,
+            defaults={
+                "bkash_number": "01700000001",
+                "nagad_number": "01700000002",
+                "rocket_number": "01700000003",
+            },
+        )
         registration_response = self.client.post(
             reverse("registrations:new"),
             {
@@ -211,6 +221,11 @@ class PaymentWorkflowTests(TestCase):
             },
         )
         self.assertEqual(registration_response.status_code, 302)
+        method_response = self.client.post(
+            registration_response["Location"],
+            {"method": PaymentMethod.BKASH},
+        )
+        self.assertEqual(method_response.status_code, 302)
         guest_registration = Registration.objects.get(
             event=event,
             contact_email="guest-payment@example.com",
@@ -246,6 +261,7 @@ class PaymentWorkflowTests(TestCase):
     @override_settings(
         DEBUG=True,
         PAYMENT_PROVIDER_CLASS="apps.payments.providers.demo.DemoProvider",
+        PAYMENT_DEMO_ENABLED=True,
         PUBLIC_BASE_URL="",
     )
     def test_development_demo_checkout_can_simulate_failure(self):
@@ -386,14 +402,11 @@ class PaymentWorkflowTests(TestCase):
             )
         )
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Online checkout is not active yet")
-        self.assertContains(response, "Choose a payment method")
-        self.assertContains(response, "bKash")
-        self.assertContains(response, "Nagad")
-        self.assertContains(response, "Rocket")
-        self.assertContains(response, "Debit or credit card")
-        self.assertContains(response, "Not configured")
+        self.assertNotContains(response, "Optional online checkout")
+        self.assertNotContains(response, "Demo available")
+        self.assertNotContains(response, "Debit or credit card")
         self.assertNotContains(response, "Continue to secure checkout")
+        self.assertContains(response, "Continue to payment")
 
     @patch("apps.payments.services.get_provider")
     @override_settings(PUBLIC_BASE_URL="")
@@ -420,12 +433,17 @@ class PaymentWorkflowTests(TestCase):
         self.assertEqual(payment.status, PaymentTransaction.Status.FAILED)
         self.assertEqual(payment.diagnostic_code, "invalid_checkout_response")
 
+    @override_settings(
+        EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend",
+        DEFAULT_FROM_EMAIL="summit@example.org",
+    )
     @patch("apps.payments.services.get_provider")
     def test_verified_success_records_paid_and_issues_ticket_once(self, get_provider_mock):
         get_provider_mock.return_value = self.provider
         payment = self.start_checkout()
         self.provider.result = self.valid_result()
-        processed = self.callback(payment)
+        with self.captureOnCommitCallbacks(execute=True):
+            processed = self.callback(payment)
         self.assertEqual(processed.status, PaymentTransaction.Status.SUCCEEDED)
         self.assertIsNotNone(processed.verified_at)
         self.registration.refresh_from_db()
@@ -451,6 +469,9 @@ class PaymentWorkflowTests(TestCase):
             Registration.objects.get(pk=self.registration.pk).ticket_reference,
             self.registration.ticket_reference,
         )
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertIn("GENERAL DELEGATE PASS", mail.outbox[0].alternatives[0][0])
+        self.assertIn("cid:ysse-logo", mail.outbox[0].alternatives[0][0])
 
     @patch("apps.payments.services.get_provider")
     def test_failed_verified_payment_can_be_retried_with_a_new_attempt(self, get_provider_mock):

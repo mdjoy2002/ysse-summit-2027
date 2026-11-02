@@ -3,6 +3,7 @@
 import secrets
 import string
 import uuid
+from string import Formatter
 
 from django.conf import settings
 from django.core.exceptions import ValidationError
@@ -14,6 +15,12 @@ from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 
 from apps.home.models import SummitEvent
+
+from .payment_validators import validate_payment_proof
+from .storage import PrivatePaymentProofStorage
+
+
+payment_proof_storage = PrivatePaymentProofStorage()
 
 
 def generate_registration_reference(full_name=""):
@@ -134,7 +141,12 @@ class PassType(models.Model):
         if self.capacity is None:
             return True
         return (
-            self.registrations.exclude(status=Registration.Status.CANCELLED).count()
+            self.registrations.exclude(
+                status__in=(
+                    Registration.Status.CANCELLED,
+                    Registration.Status.REJECTED,
+                )
+            ).count()
             < self.capacity
         )
 
@@ -142,12 +154,146 @@ class PassType(models.Model):
         return self.name
 
 
+class PaymentSettings(models.Model):
+    """Organizer-managed mobile payment destination numbers."""
+
+    class Key(models.TextChoices):
+        MAIN = "main", _("Main payment settings")
+
+    key = models.CharField(max_length=20, choices=Key.choices, default=Key.MAIN, unique=True)
+    bkash_number = models.CharField(max_length=32, blank=True)
+    nagad_number = models.CharField(max_length=32, blank=True)
+    rocket_number = models.CharField(max_length=32, blank=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = _("Mobile payment settings")
+        verbose_name_plural = _("Mobile payment settings")
+
+    def save(self, *args, **kwargs):
+        self.key = self.Key.MAIN
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return "Mobile payment settings"
+
+
+class RegistrationEmailSettings(models.Model):
+    """Organizer-editable messages sent for approval and rejection decisions."""
+
+    class Key(models.TextChoices):
+        MAIN = "main", _("Registration decision emails")
+
+    key = models.CharField(
+        max_length=20, choices=Key.choices, default=Key.MAIN, unique=True
+    )
+    confirmation_subject = models.CharField(
+        max_length=180,
+        default="Your YSSE Summit 2027 registration is confirmed",
+    )
+    confirmation_message = models.TextField(
+        default=(
+            "Congratulations, {full_name}! Your {pass_name} for {event_title} "
+            "is confirmed. We look forward to welcoming you on {event_date} "
+            "at {venue}. Your digital pass is included below."
+        ),
+        help_text=(
+            "Available placeholders: {full_name}, {event_title}, "
+            "{registration_id}, {pass_name}, {amount}, {event_date}, "
+            "{venue}, {status_comment}, and {ticket_url}."
+        ),
+    )
+    rejection_subject = models.CharField(
+        max_length=180,
+        default="Update about your YSSE Summit 2027 registration",
+    )
+    rejection_message = models.TextField(
+        default=(
+            "Hello {full_name}, we are unable to confirm your {pass_name} "
+            "registration for {event_title}. Review note: {status_comment}. "
+            "Your registration ID is {registration_id}. If you need help, "
+            "please contact the Summit team."
+        ),
+        help_text=(
+            "Available placeholders: {full_name}, {event_title}, "
+            "{registration_id}, {pass_name}, {amount}, {event_date}, "
+            "{venue}, and {status_comment}."
+        ),
+    )
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = _("Registration decision email settings")
+        verbose_name_plural = _("Registration decision email settings")
+
+    def clean(self):
+        """Reject unknown placeholders and unsafe subject formatting."""
+        super().clean()
+        allowed_fields = {
+            "full_name",
+            "event_title",
+            "registration_id",
+            "pass_name",
+            "amount",
+            "event_date",
+            "venue",
+            "status_comment",
+            "ticket_url",
+        }
+        errors = {}
+        for field_name in (
+            "confirmation_subject",
+            "confirmation_message",
+            "rejection_subject",
+            "rejection_message",
+        ):
+            template = getattr(self, field_name)
+            if field_name.endswith("_subject") and any(
+                character in template for character in "\r\n"
+            ):
+                errors[field_name] = _(
+                    "Email subjects must not contain line breaks."
+                )
+                continue
+            try:
+                placeholders = Formatter().parse(template)
+                for _literal, placeholder, format_spec, conversion in placeholders:
+                    if placeholder is None:
+                        continue
+                    if (
+                        placeholder not in allowed_fields
+                        or format_spec
+                        or conversion
+                    ):
+                        errors[field_name] = _(
+                            "Use only the documented placeholders without formatting options."
+                        )
+                        break
+            except ValueError:
+                errors[field_name] = _("Check the braces in this email template.")
+        if errors:
+            raise ValidationError(errors)
+
+    def save(self, *args, **kwargs):
+        self.key = self.Key.MAIN
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return "Registration decision email settings"
+
+
 class Registration(models.Model):
     """A single participant's pass reservation and ticket audit record."""
+
+    class ManualPaymentMethod(models.TextChoices):
+        BKASH = "bkash", _("bKash")
+        NAGAD = "nagad", _("Nagad")
+        ROCKET = "rocket", _("Rocket")
 
     class Status(models.TextChoices):
         PENDING = "pending", _("Pending")
         CONFIRMED = "confirmed", _("Confirmed")
+        REJECTED = "rejected", _("Rejected")
         CANCELLED = "cancelled", _("Cancelled")
 
     class PaymentStatus(models.TextChoices):
@@ -199,6 +345,19 @@ class Registration(models.Model):
         default=PaymentStatus.PENDING,
         db_index=True,
     )
+    manual_payment_method = models.CharField(
+        max_length=12,
+        choices=ManualPaymentMethod.choices,
+        blank=True,
+    )
+    payment_transaction_id = models.CharField(max_length=100, blank=True)
+    payment_proof = models.ImageField(
+        upload_to="registrations/payment-proofs/%Y/%m/",
+        storage=payment_proof_storage,
+        validators=[validate_payment_proof],
+        blank=True,
+    )
+    payment_submitted_at = models.DateTimeField(null=True, blank=True)
     submitted_at = models.DateTimeField(default=timezone.now, db_index=True)
     updated_at = models.DateTimeField(auto_now=True)
     payment_reviewed_at = models.DateTimeField(null=True, blank=True)
@@ -223,7 +382,7 @@ class Registration(models.Model):
     )
     status_audit_note = models.TextField(
         blank=True,
-        help_text=_("Explain staff confirmation or cancellation; do not include sensitive payment data."),
+        help_text=_("Explain staff confirmation, rejection, or cancellation; do not include sensitive payment data."),
     )
 
     class Meta:

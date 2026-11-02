@@ -5,6 +5,13 @@
     <a class="brand" href="{% url 'home:index' %}" aria-label="YSSE Summit 2027 home">
       <img class="brand-logo" src="{% static 'images/ysse-logo.png' %}" alt="YSSE">
       <span class="brand-copy"><small>SUMMIT 2027</small></span>
+      <img
+        class="anniversary-logo anniversary-logo-header"
+        src="{% static 'images/ysse-12th-anniversary.jpg' %}"
+        alt="YSSE 12th anniversary"
+        width="88"
+        height="84"
+      >
     </a>
     <div class="desktop-nav">
       <details class="nav-dropdown">
@@ -25,6 +32,7 @@
         </div>
       </details>
       <a href="{% url 'contact:contact' %}">Contact</a>
+      <a href="{% url 'registrations:track' %}">Track registration</a>
       {% if user.is_authenticated %}
         <details class="nav-dropdown">
           <summary>My Summit</summary>
@@ -57,6 +65,7 @@
           </div>
         </details>
         <a href="{% url 'contact:contact' %}">Contact</a>
+        <a href="{% url 'registrations:track' %}">Track registration</a>
         {% if user.is_authenticated %}
           <details class="nav-dropdown">
             <summary>My Summit</summary>

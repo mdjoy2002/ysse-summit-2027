@@ -27,6 +27,20 @@ class HomepageViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "base.html")
         self.assertContains(response, self.event.event_title)
+        self.assertContains(
+            response,
+            'src="/static/images/ysse-12th-anniversary.jpg"',
+            count=3,
+        )
+        self.assertContains(response, 'alt="YSSE 12th anniversary"', count=3)
+        self.assertContains(
+            response,
+            'class="anniversary-logo anniversary-logo-header"',
+        )
+        self.assertContains(
+            response,
+            'class="anniversary-logo anniversary-logo-footer"',
+        )
         self.assertContains(response, 'src="/static/images/ysse-logo.png"')
         self.assertContains(
             response,

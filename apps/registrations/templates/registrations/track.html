@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Track Registration | YSSE Summit 2027{% endblock %}
+{% block styles %}<link rel="stylesheet" href="{% static 'registrations/css/registrations.css' %}">{% endblock %}
+
+{% block content %}
+  <section class="registration-section">
+    <div class="registration-shell registration-form-shell">
+      <p class="registration-kicker">Registration tracking</p>
+      <h1>Check your registration status.</h1>
+      <p>Enter your registration ID and either the email address or phone number used when registering.</p>
+      <form method="post" class="registration-form">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        {% for field in form %}
+          <div class="registration-field{% if field.errors %} field-invalid{% endif %}">
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+            {% for error in field.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
+          </div>
+        {% endfor %}
+        <button class="registration-button" type="submit">Check status</button>
+      </form>
+      {% if registration %}
+        <section class="payment-panel" aria-live="polite">
+          <h2>{{ registration.pass_name_snapshot }}</h2>
+          <p>Registration ID: <strong>{{ registration.reference }}</strong></p>
+          <p>Registration status: <strong>{{ registration.get_status_display }}</strong></p>
+          <p>Payment status: <strong>{{ registration.get_payment_status_display }}</strong></p>
+          {% if registration.payment_submitted_at %}
+            <p>Payment submitted: {{ registration.payment_submitted_at|date:"M j, Y g:i A" }}</p>
+          {% endif %}
+          {% if registration.status == "confirmed" %}
+            <p>Your registration has been accepted. Please check your email for the confirmation.</p>
+          {% elif registration.status == "rejected" %}
+            <p>This registration was not approved. Please check your email for the review comment and next steps.</p>
+          {% elif registration.status == "cancelled" %}
+            <p>This registration has been cancelled. Please check your email for details.</p>
+          {% else %}
+            <p>Your registration is still under review. We will email you when its status changes.</p>
+          {% endif %}
+        </section>
+      {% endif %}
+    </div>
+  </section>
+{% endblock %}

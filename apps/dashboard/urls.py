@@ -9,6 +9,7 @@ app_name = "dashboard"
 
 urlpatterns = [
     path("", views.overview, name="overview"),
+    path("support/", views.support, name="support"),
     path("records/", views.records_index, name="records_index"),
     path(
         "records/<str:app_label>/<str:model_name>/",

@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ subject }}</title>
+  </head>
+  <body style="margin:0;padding:0;background:#f2f4ef;color:#18332a;font-family:Arial,Helvetica,sans-serif;">
+    <div style="display:none;max-height:0;overflow:hidden;opacity:0;">
+      {{ subject }} — registration {{ registration.reference }}
+    </div>
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;background:#f2f4ef;">
+      <tr>
+        <td align="center" style="padding:32px 16px;">
+          <table role="presentation" width="600" cellspacing="0" cellpadding="0" style="width:100%;max-width:600px;border-collapse:separate;border-spacing:0;background:#fffefa;border:1px solid #e1e6dc;border-radius:16px;overflow:hidden;">
+            <tr>
+              <td style="padding:28px 32px;background:#08251d;color:#fffefa;">
+                {% if notification == "confirmation" and registration.ticket_reference %}
+                  <table role="presentation" cellspacing="0" cellpadding="0" style="margin:0 0 18px;border-collapse:separate;border-spacing:8px 0;">
+                    <tr>
+                      <td style="padding:5px 10px;border-radius:8px;background:#fff;">
+                        <img src="cid:ysse-logo" width="104" alt="YSSE" style="display:block;width:104px;height:auto;">
+                      </td>
+                      <td style="padding:2px 6px;border-radius:8px;background:#fff;">
+                        <img src="cid:ysse-anniversary" width="46" alt="YSSE 12th Anniversary" style="display:block;width:46px;height:auto;">
+                      </td>
+                    </tr>
+                  </table>
+                {% endif %}
+                <p style="margin:0 0 8px;color:#d5b36a;font-size:12px;font-weight:bold;letter-spacing:2px;text-transform:uppercase;">YSSE Summit 2027</p>
+                <h1 style="margin:0;font-size:25px;line-height:1.3;">{{ subject }}</h1>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:30px 32px 12px;">
+                <p style="margin:0 0 12px;font-size:16px;line-height:1.6;">Hello {{ registration.full_name }},</p>
+                {% if notification_message %}
+                  <p style="margin:0;color:#52635a;font-size:15px;line-height:1.7;white-space:pre-line;">{{ notification_message }}</p>
+                {% elif notification == "registration" %}
+                  <p style="margin:0;color:#52635a;font-size:15px;line-height:1.7;">We received your registration and the information you submitted. Keep this registration ID for checking your status.</p>
+                {% elif notification == "confirmation" %}
+                  <p style="margin:0;color:#52635a;font-size:15px;line-height:1.7;">Your registration has been accepted. We look forward to welcoming you to {{ event.event_title }}.</p>
+                {% elif notification == "rejection" %}
+                  <p style="margin:0;color:#52635a;font-size:15px;line-height:1.7;">We’re sorry, but your registration for {{ event.event_title }} could not be approved.</p>
+                {% else %}
+                  <p style="margin:0;color:#52635a;font-size:15px;line-height:1.7;">Here is the latest update for your {{ event.event_title }} registration.</p>
+                {% endif %}
+              </td>
+            </tr>
+            {% if notification == "confirmation" and registration.ticket_reference and registration.ticket_is_valid %}
+              <tr>
+                <td style="padding:14px 32px 22px;">
+                  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:separate;border-spacing:0;border:1px solid {{ pass_style.accent }};border-radius:16px;overflow:hidden;background:{{ pass_style.background }};">
+                    <tr>
+                      <td style="padding:20px 22px;background:#08251d;color:#fff;">
+                        <p style="margin:0 0 6px;color:#d5b36a;font-size:11px;font-weight:bold;letter-spacing:2px;">{{ pass_style.label }}</p>
+                        <p style="margin:0;font-size:21px;font-weight:bold;line-height:1.35;">{{ registration.pass_name_snapshot }}</p>
+                        <p style="margin:8px 0 0;color:#dce8df;font-size:13px;">{{ event.event_title }}</p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="padding:18px 22px;color:#18332a;">
+                        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;font-size:13px;">
+                          <tr><td style="padding:6px 0;color:#68776c;">Pass holder</td><td align="right" style="padding:6px 0;font-weight:bold;">{{ registration.full_name }}</td></tr>
+                          <tr><td style="padding:6px 0;color:#68776c;">Event date</td><td align="right" style="padding:6px 0;font-weight:bold;">{{ event_date }}</td></tr>
+                          <tr><td style="padding:6px 0;color:#68776c;">Venue</td><td align="right" style="padding:6px 0;font-weight:bold;">{{ event.venue|default:"To be announced" }}</td></tr>
+                          <tr><td style="padding:6px 0;color:#68776c;">Registration ID</td><td align="right" style="padding:6px 0;font-weight:bold;">{{ registration.reference }}</td></tr>
+                          <tr><td style="padding:6px 0;color:#68776c;">Pass category</td><td align="right" style="padding:6px 0;font-weight:bold;">{{ pass_category_display }}</td></tr>
+                        </table>
+                        <p style="margin:15px 0 0;padding:12px;border-radius:8px;background:#fff;color:#18332a;font-size:12px;line-height:1.6;">
+                          Ticket reference<br><strong style="font-size:14px;letter-spacing:.5px;">{{ registration.ticket_reference }}</strong>
+                        </p>
+                        {% if ticket_url %}
+                          <p style="margin:16px 0 0;">
+                            <a href="{{ ticket_url }}" style="display:inline-block;padding:12px 20px;border-radius:999px;background:{{ pass_style.accent }};color:#fff;font-size:13px;font-weight:bold;text-decoration:none;">Open digital pass</a>
+                          </p>
+                        {% endif %}
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            {% endif %}
+            {% if show_status_comment %}
+              <tr>
+                <td style="padding:0 32px 18px;">
+                  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;border-left:4px solid #d5b36a;background:#f7f7f2;">
+                    <tr>
+                      <td style="padding:16px 18px;">
+                        <p style="margin:0 0 6px;color:#68776c;font-size:12px;font-weight:bold;letter-spacing:1px;text-transform:uppercase;">Comment from the registration team</p>
+                        <p style="margin:0;color:#18332a;font-size:14px;line-height:1.7;white-space:pre-line;">{{ status_comment }}</p>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            {% endif %}
+            <tr>
+              <td style="padding:12px 32px;">
+                <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;border-radius:12px;background:#f0f3eb;">
+                  <tr>
+                    <td style="padding:18px 20px;">
+                      <p style="margin:0 0 5px;color:#68776c;font-size:12px;font-weight:bold;letter-spacing:1px;text-transform:uppercase;">Your registration ID</p>
+                      <p style="margin:0;color:#13553d;font-size:23px;font-weight:bold;letter-spacing:1px;">{{ registration.reference }}</p>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:12px 32px 28px;">
+                <h2 style="margin:0 0 12px;color:#18332a;font-size:17px;">Submitted information</h2>
+                <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;font-size:14px;">
+                  <tr>
+                    <td style="padding:9px 0;border-bottom:1px solid #e8ebe4;color:#68776c;">Name</td>
+                    <td align="right" style="padding:9px 0;border-bottom:1px solid #e8ebe4;font-weight:bold;">{{ registration.full_name }}</td>
+                  </tr>
+                  <tr>
+                    <td style="padding:9px 0;border-bottom:1px solid #e8ebe4;color:#68776c;">Email</td>
+                    <td align="right" style="padding:9px 0;border-bottom:1px solid #e8ebe4;font-weight:bold;overflow-wrap:anywhere;">{{ registration.contact_email }}</td>
+                  </tr>
+                  <tr>
+                    <td style="padding:9px 0;border-bottom:1px solid #e8ebe4;color:#68776c;">Phone</td>
+                    <td align="right" style="padding:9px 0;border-bottom:1px solid #e8ebe4;font-weight:bold;">{{ registration.phone_number|default:"Not provided" }}</td>
+                  </tr>
+                  <tr>
+                    <td style="padding:9px 0;border-bottom:1px solid #e8ebe4;color:#68776c;">Pass</td>
+                    <td align="right" style="padding:9px 0;border-bottom:1px solid #e8ebe4;font-weight:bold;">{{ registration.pass_name_snapshot }}</td>
+                  </tr>
+                  <tr>
+                    <td style="padding:9px 0;border-bottom:1px solid #e8ebe4;color:#68776c;">Amount</td>
+                    <td align="right" style="padding:9px 0;border-bottom:1px solid #e8ebe4;font-weight:bold;">BDT {{ registration.amount_due|floatformat:2 }}</td>
+                  </tr>
+                  {% if has_payment_submission %}
+                    <tr>
+                      <td style="padding:9px 0;border-bottom:1px solid #e8ebe4;color:#68776c;">Payment service</td>
+                      <td align="right" style="padding:9px 0;border-bottom:1px solid #e8ebe4;font-weight:bold;">{{ registration.get_manual_payment_method_display }}</td>
+                    </tr>
+                    <tr>
+                      <td style="padding:9px 0;border-bottom:1px solid #e8ebe4;color:#68776c;">Transaction ID</td>
+                      <td align="right" style="padding:9px 0;border-bottom:1px solid #e8ebe4;font-weight:bold;">{{ registration.payment_transaction_id }}</td>
+                    </tr>
+                    <tr>
+                      <td style="padding:9px 0;border-bottom:1px solid #e8ebe4;color:#68776c;">Payment screenshot</td>
+                      <td align="right" style="padding:9px 0;border-bottom:1px solid #e8ebe4;font-weight:bold;">Received</td>
+                    </tr>
+                  {% endif %}
+                  <tr>
+                    <td style="padding:9px 0;border-bottom:1px solid #e8ebe4;color:#68776c;">Registration status</td>
+                    <td align="right" style="padding:9px 0;border-bottom:1px solid #e8ebe4;font-weight:bold;">{{ registration.get_status_display }}</td>
+                  </tr>
+                  <tr>
+                    <td style="padding:9px 0;color:#68776c;">Payment status</td>
+                    <td align="right" style="padding:9px 0;font-weight:bold;">{{ registration.get_payment_status_display }}</td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+            {% if tracking_url %}
+              <tr>
+                <td align="center" style="padding:0 32px 30px;">
+                  <a href="{{ tracking_url }}" style="display:inline-block;padding:13px 22px;border-radius:999px;background:#13553d;color:#ffffff;font-size:14px;font-weight:bold;text-decoration:none;">Track your registration</a>
+                </td>
+              </tr>
+            {% endif %}
+            <tr>
+              <td style="padding:20px 32px;background:#f7f7f2;color:#68776c;font-size:12px;line-height:1.6;">
+                <p style="margin:0;">This is an automatic message from the YSSE Summit 2027 registration team. Please keep your registration ID for future reference.</p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

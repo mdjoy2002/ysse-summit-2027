@@ -298,6 +298,234 @@
   font: inherit;
 }
 
+.payment-method-choice-form {
+  max-width: 100%;
+  margin-top: 1.75rem;
+}
+
+.payment-choice-list {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.payment-choice-list legend {
+  margin-bottom: .85rem;
+  color: #18332a;
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+ol.payment-choice-list {
+  display: grid;
+  gap: .85rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.payment-amount-card {
+  display: grid;
+  gap: .2rem;
+  margin: 1.5rem 0 1.15rem;
+  padding: 1rem 1.2rem;
+  border: 1px solid #d6ddcf;
+  border-radius: .85rem;
+  background: linear-gradient(120deg, #f1f5ed, #fffefa);
+}
+
+.payment-amount-card span {
+  color: #59675f;
+  font-size: .82rem;
+  font-weight: 700;
+}
+
+.payment-amount-card strong {
+  color: #13553d;
+  font-size: clamp(1.7rem, 5vw, 2.2rem);
+  letter-spacing: -.035em;
+}
+
+.payment-method-intro {
+  max-width: 62ch;
+  color: #52635a;
+}
+
+.payment-choice {
+  display: flex;
+  position: relative;
+  min-height: 100px;
+  align-items: center;
+  gap: .8rem;
+  padding: 1rem 1.15rem;
+  border: 1px solid #d7ded5;
+  border-radius: .9rem;
+  background: #fffefa;
+  cursor: pointer;
+  transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+  animation: payment-choice-enter .45s ease both;
+}
+
+.payment-choice-item:nth-child(2) .payment-choice {
+  animation-delay: .1s;
+}
+
+.payment-choice-item:nth-child(3) .payment-choice {
+  animation-delay: .2s;
+}
+
+.payment-choice:hover {
+  transform: translateY(-2px);
+  border-color: #9ab5a4;
+  box-shadow: 0 .75rem 1.5rem rgb(8 37 29 / 7%);
+}
+
+.payment-choice:has(input:checked),
+.payment-choice:focus-within {
+  border-color: #13553d;
+  box-shadow: 0 0 0 3px rgb(19 85 61 / 12%);
+}
+
+.payment-choice input {
+  width: 1.2rem;
+  height: 1.2rem;
+  flex: 0 0 auto;
+  accent-color: #13553d;
+}
+
+.payment-choice-step {
+  display: grid;
+  width: 2rem;
+  height: 2rem;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 50%;
+  background: #eef2e9;
+  color: #52635a;
+  font-size: .76rem;
+  font-weight: 800;
+}
+
+.payment-choice-copy {
+  display: grid;
+  min-width: 0;
+  flex: 1;
+  gap: .35rem;
+}
+
+.payment-choice-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .55rem;
+}
+
+.payment-choice-copy strong {
+  color: #164532;
+  font-size: 1rem;
+}
+
+.payment-brand {
+  display: inline-flex;
+  min-width: 4.25rem;
+  min-height: 1.8rem;
+  align-items: center;
+  justify-content: center;
+  padding: .2rem .55rem;
+  border-radius: .45rem;
+  font-size: .78rem;
+  font-weight: 900;
+  letter-spacing: -.025em;
+}
+
+.payment-brand-bkash {
+  background: #fff0f5;
+  color: #d12053;
+}
+
+.payment-brand-nagad {
+  background: #fff2eb;
+  color: #e45b24;
+}
+
+.payment-brand-rocket {
+  background: #f2edfa;
+  color: #7136a7;
+}
+
+.payment-choice-number-label {
+  color: #68776c;
+  font-size: .76rem;
+}
+
+.payment-choice-number {
+  color: #18332a;
+  font-size: 1.05rem;
+  font-weight: 850;
+  letter-spacing: .035em;
+  overflow-wrap: anywhere;
+}
+
+.payment-choice-indicator {
+  width: .7rem;
+  height: .7rem;
+  flex: 0 0 auto;
+  border: 2px solid #b8c2b9;
+  border-radius: 50%;
+}
+
+.payment-choice:has(input:checked) .payment-choice-indicator {
+  border: .22rem solid #13553d;
+  background: #fff;
+}
+
+.payment-continue-button {
+  width: 100%;
+  justify-content: space-between;
+  margin-top: 1.15rem;
+  padding-right: 1.35rem;
+  padding-left: 1.35rem;
+}
+
+.payment-continue-button span {
+  font-size: 1.2rem;
+  transition: transform .2s ease;
+}
+
+.payment-continue-button:hover span {
+  transform: translateX(3px);
+}
+
+.payment-method-page > .registration-text-link {
+  margin-left: 0;
+}
+
+@keyframes payment-choice-enter {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .payment-choice {
+    animation: none;
+    transition: none;
+  }
+
+  .payment-choice:hover {
+    transform: none;
+  }
+
+  .payment-continue-button span {
+    transition: none;
+  }
+}
+
 .registration-text-link {
   display: inline-block;
   margin: 1rem;

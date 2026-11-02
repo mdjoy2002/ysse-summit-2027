@@ -18,7 +18,7 @@ from apps.about.models import TimelineMilestone, TimelinePeriod
 from apps.home.models import FeaturedSpeaker, SummitEvent
 from apps.partners.models import Sponsor, SponsorCategory
 from apps.payments.models import PaymentMethod, PaymentTransaction
-from apps.registrations.models import PassType, Registration
+from apps.registrations.models import PaymentSettings, PassType, Registration
 from apps.schedule.models import ScheduleSession
 from apps.speakers.models import SpeakerCategory
 
@@ -39,6 +39,14 @@ class DashboardFixture(TestCase):
         cls.pass_type.is_published = True
         cls.pass_type.is_available = True
         cls.pass_type.save()
+        PaymentSettings.objects.update_or_create(
+            key=PaymentSettings.Key.MAIN,
+            defaults={
+                "bkash_number": "",
+                "nagad_number": "",
+                "rocket_number": "",
+            },
+        )
         cls.moderator_group, _created = Group.objects.get_or_create(
             name=MODERATOR_GROUP_NAME
         )
@@ -85,6 +93,7 @@ class DashboardAccessTests(DashboardFixture):
     def test_anonymous_user_is_redirected_to_login(self):
         for route in (
             "dashboard:overview",
+            "dashboard:support",
             "dashboard:records_index",
             "dashboard:records_list",
             "dashboard:reports",
@@ -99,6 +108,83 @@ class DashboardAccessTests(DashboardFixture):
                 self.assertEqual(response.status_code, 302)
                 self.assertIn("/admin-2/", response["Location"])
                 self.assertIn("/dashboard/", response["Location"])
+
+    def test_support_page_shows_fixed_developer_contacts_to_moderators(self):
+        moderator = self.make_staff("support-page-moderator")
+        self.client.force_login(moderator)
+        response = self.client.get(reverse("dashboard:support"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Need a hand with the Summit platform?")
+        self.assertContains(response, "Md. Imtiaz Sarder")
+        self.assertContains(response, "Design &amp; Development")
+        self.assertContains(response, "mdimtiazsarderjoy@gmail.com")
+        self.assertContains(response, "mailto:mdimtiazsarderjoy@gmail.com")
+        self.assertContains(response, "tel:01736712955")
+        self.assertContains(response, "https://wa.me/8801736712955")
+        self.assertContains(response, "https://www.facebook.com/mdimtiaz.joy.50")
+        self.assertContains(response, "dashboard-support-contact-email")
+        self.assertContains(response, "dashboard-support-contact-phone")
+        self.assertContains(response, "dashboard-support-contact-whatsapp")
+        self.assertContains(response, "dashboard-support-contact-facebook")
+        self.assertContains(response, "dashboard-support-hero")
+        self.assertContains(
+            response,
+            "These developer contact details are maintained in the application code.",
+        )
+        self.assertNotContains(response, "Update support details")
+        self.assertNotContains(response, "Add support details")
+
+    def test_support_page_shows_fixed_contact_and_blocks_admin_editing(self):
+        administrator = get_user_model().objects.create_superuser(
+            username="support-page-admin",
+            email="support-page-admin@example.org",
+            password="test-support-admin-password",
+        )
+        self.client.force_login(administrator)
+        response = self.client.get(reverse("dashboard:support"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Md. Imtiaz Sarder")
+        self.assertContains(response, "Design &amp; Development")
+        self.assertContains(response, "mdimtiazsarderjoy@gmail.com")
+        self.assertContains(response, "01736712955")
+        self.assertContains(response, "https://wa.me/8801736712955")
+        self.assertContains(
+            response,
+            "https://www.facebook.com/mdimtiaz.joy.50",
+        )
+        edit_url = reverse(
+            "dashboard:records_edit",
+            args=("contact", "developersupportsettings", "1"),
+        )
+        self.assertNotContains(response, "Update support details")
+        self.assertEqual(self.client.get(edit_url).status_code, 404)
+        self.assertEqual(
+            self.client.get("/ysse2014/contact/developersupportsettings/").status_code,
+            404,
+        )
+        self.assertFalse(
+            any(
+                model._meta.app_label == "contact"
+                and model._meta.model_name == "developersupportsettings"
+                for model in admin.site._registry
+            )
+        )
+
+    def test_dashboard_sidebar_has_accessible_responsive_navigation(self):
+        moderator = self.make_staff("dashboard-sidebar-moderator")
+        self.client.force_login(moderator)
+
+        response = self.client.get(reverse("dashboard:overview"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'aria-label="Admin Panel 2 navigation"')
+        self.assertContains(response, "Records directory")
+        self.assertContains(response, "Reports &amp; insights")
+        self.assertContains(response, "Developer support")
+        self.assertContains(response, 'aria-controls="dashboard-sidebar"')
+        self.assertContains(response, "dashboard-nav-backdrop")
 
     def test_admin_panel_two_sign_in_accepts_only_dashboard_authorized_users(self):
         self.assertContains(
@@ -216,13 +302,18 @@ class DashboardAccessTests(DashboardFixture):
                 codename="review_competitionsubmission",
             ).exists()
         )
+        self.assertTrue(
+            group.permissions.filter(
+                content_type__app_label="registrations",
+                codename="change_paymentsettings",
+            ).exists()
+        )
         self.assertFalse(
             group.permissions.filter(
                 content_type__app_label="registrations",
                 codename="reconcile_registration_payments",
             ).exists()
         )
-
 
 class DashboardStatisticsTests(DashboardFixture):
     def test_statistics_use_published_and_pending_database_records(self):
@@ -667,6 +758,101 @@ class DashboardRecordBrowserTests(DashboardFixture):
         self.assertIn("text/csv", response["Content-Type"])
         self.assertIn(b"Admin action test", response.content)
 
+    def test_moderator_can_confirm_submitted_mobile_payment_in_admin_panel_two(self):
+        registration = self.create_registration(
+            "manual-payment-review",
+            manual_payment_method=Registration.ManualPaymentMethod.NAGAD,
+            payment_transaction_id="NAGAD-TXN-9002",
+            payment_proof="registrations/payment-proofs/proof.png",
+            payment_submitted_at=timezone.now(),
+            payment_audit_note="Checked the Nagad transaction in the merchant account.",
+        )
+        moderator = self.make_staff(
+            "manual-payment-review-moderator",
+            (
+                "registrations.view_registration",
+                "registrations.reconcile_registration_payments",
+            ),
+        )
+        self.client.force_login(moderator)
+        url = reverse(
+            "dashboard:records_list",
+            args=("registrations", "registration"),
+        )
+
+        page = self.client.get(url)
+        self.assertEqual(page.status_code, 200)
+        self.assertContains(page, "Confirm selected submitted mobile payments")
+        detail = self.client.get(
+            reverse(
+                "dashboard:records_detail",
+                args=("registrations", "registration", registration.pk),
+            )
+        )
+        self.assertEqual(detail.status_code, 200)
+        self.assertContains(detail, "NAGAD-TXN-9002")
+        self.assertContains(detail, "Download private payment proof")
+
+        response = self.client.post(
+            url,
+            {
+                "action": "confirm_manual_payments",
+                "index": "0",
+                "select_across": "0",
+                "_selected_action": [str(registration.pk)],
+            },
+        )
+
+        self.assertEqual(response.status_code, 302)
+        registration.refresh_from_db()
+        self.assertEqual(
+            registration.payment_status,
+            Registration.PaymentStatus.PAID,
+        )
+        self.assertEqual(registration.payment_reviewed_by, moderator)
+        self.assertTrue(registration.ticket_is_valid)
+
+    def test_moderator_can_update_mobile_payment_numbers_in_admin_panel_two(self):
+        settings = PaymentSettings.objects.get(key=PaymentSettings.Key.MAIN)
+        moderator = self.make_staff(
+            "payment-settings-moderator",
+            (
+                "registrations.view_paymentsettings",
+                "registrations.change_paymentsettings",
+            ),
+        )
+        self.client.force_login(moderator)
+        list_url = reverse(
+            "dashboard:records_list",
+            args=("registrations", "paymentsettings"),
+        )
+
+        listing = self.client.get(list_url)
+        self.assertEqual(listing.status_code, 200)
+        self.assertContains(listing, "Mobile payment settings")
+        edit_url = reverse(
+            "dashboard:records_edit",
+            args=("registrations", "paymentsettings", settings.pk),
+        )
+        editor = self.client.get(edit_url)
+        self.assertEqual(editor.status_code, 200)
+        self.assertContains(editor, "Bkash number")
+
+        response = self.client.post(
+            edit_url,
+            {
+                "bkash_number": "01810000001",
+                "nagad_number": "01810000002",
+                "rocket_number": "01810000003",
+            },
+        )
+
+        self.assertEqual(response.status_code, 302)
+        settings.refresh_from_db()
+        self.assertEqual(settings.bkash_number, "01810000001")
+        self.assertEqual(settings.nagad_number, "01810000002")
+        self.assertEqual(settings.rocket_number, "01810000003")
+
     def test_user_record_details_never_expose_the_password_hash(self):
         user = get_user_model().objects.create_user(
             username="private-password-hash-user",
@@ -724,6 +910,11 @@ class DashboardRecordBrowserTests(DashboardFixture):
         self.assertNotContains(directory, reverse("admin:index"))
         self.assertContains(directory, "groups")
         self.assertContains(directory, "users")
+        for app in directory.context["model_catalog"]:
+            self.assertTrue(app["description"])
+            for model in app["models"]:
+                self.assertTrue(model["description"])
+        self.assertNotContains(directory, "Developer support contacts")
         self.assertEqual(
             len(dashboard_shortcuts(moderator)),
             len(admin.site._registry),

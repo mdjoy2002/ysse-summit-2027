@@ -524,3 +524,351 @@ earlier entries.
   were changed. A local URL-format check passed without displaying the
   credential. `python manage.py check` could not run because `django-environ`
   is not installed in the active Python environment.
+
+[2026-11-03] Add manual mobile payment submissions and review
+- Added bKash, Nagad, and Rocket manual payment submission with transaction ID
+  and validated screenshot upload. Payment proof is stored outside public media
+  and served only to the registration owner or authorized staff. Payment stays
+  pending until the audited confirmation action is used.
+- Added the permission-gated confirmation action and proof/details to both
+  Django Admin and Admin Panel 2, prevented competing online checkout while a
+  manual submission is awaiting review, and documented organizer setup.
+- Files: `apps/registrations/models.py`, `payment_forms.py`,
+  `payment_validators.py`, `storage.py`, `views.py`, `urls.py`, `admin.py`,
+  `templates/registrations/detail.html`,
+  `migrations/0006_registration_manual_payment_method_and_more.py`,
+  `apps/payments/services.py`, `apps/registrations/tests.py`,
+  `apps/dashboard/tests.py`, `README.md`, `planning.txt`.
+- Checks: 93 tests across registrations, payments, and dashboard passed on an
+  isolated in-memory SQLite database; Django system check reported no issues;
+  migration drift check reported no changes; `git diff --check` passed.
+- Note: An initial default test invocation used the configured external test
+  database. Django's test runner could not remove its test database because an
+  active connection remained; no remote database or connection was manually
+  deleted or terminated. All subsequent verification used isolated SQLite.
+
+[2026-11-03] Added registration payment steps, tracking, and email updates
+- Changed paid registration to redirect through configured bKash/Nagad/Rocket
+  method selection, then transaction ID and private screenshot submission,
+  followed by a thank-you page. Payment destination numbers are editable in
+  both Django Admin and Admin Panel 2.
+- Added public registration tracking by registration ID and email, added
+  tracking links to desktop/mobile navigation, and send submission summaries
+  and acceptance emails using Django's configured sender.
+- Removed participant-facing demo/online checkout language and set the example
+  environment to use the unconfigured provider with demo payments disabled.
+- Updated README payment operations and added regression tests for the payment
+  flow, private proof access, both admin configuration surfaces, tracking,
+  submission email and acceptance email.
+- Files: `.env.example`, `README.md`, `apps/dashboard/management/commands/setup_summit_moderators.py`,
+  `apps/dashboard/tests.py`, `apps/payments/services.py`,
+  `apps/payments/tests.py`, `apps/registrations/` (models, admin, forms,
+  validators, storage, views, URLs, migrations, tests and payment/tracking
+  templates), `config/settings/development.py`,
+  `templates/partials/navbar.html`, `planning.txt`.
+- Checks: all 98 tests across registrations, payments and dashboard passed on
+  isolated in-memory SQLite; Django system check passed; migration drift check
+  reported no changes; Python compilation and `git diff --check` passed.
+
+[2026-11-03] Polished payment selection and registration email receipts
+- Replaced the payment method dropdown with visible bKash, Nagad, and Rocket
+  choices that each display the configured destination number before proceeding
+  to the transaction ID and screenshot form.
+- Added a branded responsive HTML email alternative while retaining the
+  plain-text email; receipts summarize registration and submitted payment
+  details. The thank-you page now displays the registration ID and submission
+  summary.
+- Set the requested sender address as the configurable default and documented
+  Gmail SMTP environment setup. No app password or other mail credential was
+  saved in project files.
+- Files: `apps/registrations/templates/registrations/payment_method.html`,
+  `apps/registrations/templates/registrations/thank_you.html`,
+  `apps/registrations/templates/registrations/emails/notification.html`,
+  `apps/registrations/static/registrations/css/registrations.css`,
+  `apps/registrations/services.py`, `apps/registrations/tests.py`,
+  `config/settings/base.py`, `.env.example`, `README.md`, `planning.txt`.
+- Checks: all 98 tests across registrations, payments and dashboard passed on
+  isolated in-memory SQLite; Django system check passed; migration drift check
+  reported no changes; Pylance syntax checks, Python compilation, and
+  `git diff --check` passed.
+
+[2026-11-03] Refreshed responsive site styling and homepage anniversary branding
+- Added a cropped, optimized copy of the supplied YSSE 12th anniversary image
+  beside the homepage countdown.
+- Updated the shared navbar dropdowns to animate open on desktop pointer hover
+  and keyboard focus while preserving tap-to-expand behavior on mobile.
+  Improved global form focus styling and allowed narrow viewports to shrink
+  without horizontal overflow; adjusted the homepage hero and countdown layout.
+- Documented the shared navigation and responsive behavior.
+- Files: `static/images/ysse-12th-anniversary.jpg`, `static/css/site.css`,
+  `apps/home/static/home/css/home.css`, `apps/home/templates/home/index.html`,
+  `apps/home/tests.py`, `README.md`, `planning.txt`.
+- Checks: all 18 `apps.home` tests passed; Django system check passed;
+  migration drift check reported no changes; the new logo was found by Django
+  staticfiles. Browser checked 14 public pages at 320, 390, 768, 1024, and
+  1440px with HTTP 200 and no horizontal overflow; desktop hover and mobile
+  tap dropdown interactions opened as expected. `git diff --check` passed.
+
+[2026-11-03] Added animated anniversary branding to shared header and footer
+- Added the YSSE 12th anniversary logo to the shared site header and footer,
+  enlarged its homepage countdown presentation, and applied a subtle floating
+  animation that respects reduced-motion preferences.
+- Adjusted narrow-screen header spacing so both brand marks remain visible
+  alongside the mobile menu.
+- Files: `templates/partials/navbar.html`, `templates/partials/footer.html`,
+  `static/css/site.css`, `apps/home/templates/home/index.html`,
+  `apps/home/static/home/css/home.css`, `apps/home/tests.py`, `README.md`,
+  `planning.txt`.
+- Checks: all 18 `apps.home` tests passed; browser checks confirmed the
+  anniversary marks render in header, footer and countdown at 320, 390, 768,
+  1024, and 1440px without horizontal overflow. Browser confirmed logo motion
+  honors reduced-motion preference. Desktop hover and mobile tap dropdowns
+  were checked; Django checks, migration drift and `git diff --check` passed.
+
+[2026-11-03] Fixed registration receipts and admin decisions
+- Made registration receipt emails queue for paid registrations as well as free
+  registrations; production settings now use SMTP rather than silently using
+  the console backend.
+- Added admin approval/rejection actions with a required shared decision
+  comment, a distinct rejected status, and styled HTML/plain-text decision
+  emails containing the comment. Updated registration tracking/detail pages
+  and late-payment reconciliation for rejected registrations.
+- Enlarged and animated the anniversary logo in shared headers and footers,
+  retaining the reduced-motion preference; updated email/deployment guidance.
+- Files: `apps/registrations/admin.py`, `apps/registrations/models.py`,
+  `apps/registrations/services.py`, `apps/registrations/tests.py`,
+  `apps/registrations/migrations/0008_alter_registration_status.py`,
+  `apps/registrations/migrations/0009_alter_registration_status_audit_note.py`,
+  `apps/registrations/templates/registrations/detail.html`,
+  `apps/registrations/templates/registrations/track.html`,
+  `apps/registrations/templates/registrations/emails/notification.html`,
+  `apps/payments/services.py`, `config/settings/production.py`,
+  `.env.example`, `templates/partials/navbar.html`,
+  `templates/partials/footer.html`, `static/css/site.css`, `README.md`,
+  `planning.txt`.
+- Checks: all 89 `apps.registrations`, `apps.payments`, and `apps.home` tests
+  passed on temporary SQLite; Django system check passed; migration drift
+  check found no changes; production settings selected SMTP when configured
+  for console; `git diff --check` passed.
+
+[2026-11-03] Added shared scroll-reveal motion across pages
+- Added a reusable IntersectionObserver-driven reveal for page sections, cards,
+  forms, dashboard content and the shared footer. Reveals use a subtle upward
+  fade/blur with a short stagger, run once as content enters view, and leave
+  content visible for reduced-motion preferences or browsers without observer
+  support.
+- Files: `templates/base.html`, `static/css/site.css`,
+  `static/js/scroll-reveal.js`, `README.md`, `planning.txt`.
+- Checks: all 18 `apps.home` tests passed; Django system check passed; browser
+  verified reveal targets become visible on scroll on homepage and About page,
+  reduced-motion disables reveal hiding, and a 390px viewport has no horizontal
+  overflow. `git diff --check` passed. Node.js is unavailable in this
+  environment; the browser loaded and executed the JavaScript successfully.
+
+[2026-11-03] Added individual registration approval from Django Admin profiles
+- Added per-registration confirm/reject buttons to the admin change page for
+  staff with status-management permission. Decisions use the profile's audit
+  comment and existing workflow services, preserving payment eligibility,
+  ticket issuance, email delivery, and reviewer auditing.
+- Files: `apps/registrations/admin.py`,
+  `apps/registrations/templates/admin/registrations/registration/change_form.html`,
+  `apps/registrations/tests.py`, `README.md`, `planning.txt`.
+- Checks: all 72 `apps.registrations` and `apps.payments` tests passed,
+  including individual profile approval; Django system check passed, migration
+  drift check found no changes, and `git diff --check` passed.
+
+[2026-11-03] Documented individual registration review
+- Clarified that staff can open a single registration attendee record in Django
+  Admin, review its submitted profile details, and confirm/reject it with the
+  required status comment; documented payment eligibility and guest accounts.
+- Files: `README.md`, `planning.txt`.
+- Checks: all 45 `apps.registrations` tests passed on SQLite; Django system
+  check passed; migration drift check found no changes. The default PostgreSQL
+  test setup could not create its already-existing `test_neondb`, so tests were
+  rerun against the local SQLite test database.
+
+[2026-11-03] Fixed registration receipt email delivery configuration
+- Set Gmail SMTP as the default mail host so production SMTP works when the
+  host is not separately configured; SMTP credentials remain deployment secrets.
+- Extended the guest registration HTTP-flow test to execute the commit callback
+  and verify the submitted email receives the registration ID and profile/pass
+  details in both plain-text and HTML receipt content.
+- Clarified local console versus real SMTP delivery and SMTP log troubleshooting.
+- Files: `config/settings/base.py`, `apps/registrations/tests.py`, `README.md`,
+  `config/settings/development.py`, `planning.txt`.
+- Checks: all 45 `apps.registrations` tests passed on SQLite; Django system
+  check and migration drift check passed; `git diff --check` passed. Active
+  development settings now select SMTP with `smtp.gmail.com` and configured
+  credentials. Production settings could not be loaded locally because the
+  required production `SECRET_KEY` is not present; no external email was sent
+  as a delivery test.
+
+[2026-11-03] Added profile-save registration and payment decisions
+- Made registration `Status` and `Payment status` editable for their respective
+  authorized staff permissions on an individual Admin profile. Saving a valid
+  status change routes through the audited workflow services and emails the
+  participant; invalid transitions, missing audit notes, unauthorized changes,
+  and changing both statuses together are rejected.
+- Added Admin profile-save tests for individual rejection/payment failure and
+  their participant notifications; documented the save workflow and required
+  SMTP configuration.
+- Files: `apps/registrations/admin.py`, `apps/registrations/tests.py`,
+  `README.md`, `planning.txt`.
+- Checks: targeted profile-save tests passed; all 74 tests across
+  `apps.registrations` and `apps.payments` passed on SQLite; Django system
+  check, migration drift check, and `git diff --check` passed.
+
+[2026-11-03] Configured local Gmail SMTP sender
+- Updated the ignored local `.env` with the requested Gmail sender, SMTP
+  settings, and app password; updated `.env.example` with the non-secret SMTP
+  configuration. No credential was added to tracked source.
+- Documented that deployment environment variables override `.env` and must be
+  set separately on the hosting platform.
+- Checks: local `.env` settings matched the requested SMTP backend, Gmail
+  account, sender, TLS/port, and supplied app password when inherited email
+  environment overrides were cleared; Django system and migration checks and
+  `git diff --check` passed. No external SMTP login or email was attempted.
+
+[2026-11-03] Redesigned manual payment method selection
+- Reorganized the mobile payment choice screen around a clear amount summary,
+  sequential provider cards, text-based brand marks, merchant-number labels,
+  selected/focus states, and a reduced-motion-aware staggered entrance.
+- Added rendered-page assertions for the provider order and payment details.
+- Files: `apps/registrations/templates/registrations/payment_method.html`,
+  `apps/registrations/static/registrations/css/registrations.css`,
+  `apps/registrations/tests.py`, `README.md`, `planning.txt`.
+- Checks: all 47 `apps.registrations` tests passed on SQLite; Django system
+  check and migration drift check passed; `git diff --check` passed.
+
+[2026-11-03] Defer paid registration until payment option submission
+- Kept valid paid registration details in the participant's session instead of
+  saving a registration or sending its receipt immediately. A valid configured
+  bKash/Nagad/Rocket choice now creates the registration exactly once with the
+  selected method and only then queues its receipt; invalid/replayed submissions
+  do not create another record. Free-pass registration behavior is unchanged.
+- Updated the registration/payment flow test and its demo-payment dependent test;
+  clarified the paid-pass sequence in README.
+- Files: `apps/registrations/views.py`, `apps/registrations/services.py`,
+  `apps/registrations/urls.py`,
+  `apps/registrations/templates/registrations/register.html`,
+  `apps/registrations/templates/registrations/payment_method.html`,
+  `apps/registrations/tests.py`, `apps/payments/tests.py`, `README.md`,
+  `planning.txt`.
+- Checks: all 75 tests across `apps.registrations` and `apps.payments` passed
+  on SQLite; Django system check and migration drift check passed;
+  `git diff --check` passed.
+
+[2026-11-03] Allow compatible status changes in one Admin save
+- Enabled simultaneous registration/payment status edits on one registration
+  profile save. The Admin validates compatible transitions and both audit notes,
+  then applies the existing payment and registration workflows atomically;
+  invalid combinations remain blocked.
+- Added a profile-save regression test for confirming a registration and
+  marking its payment paid together; updated the Admin workflow documentation.
+- Files: `apps/registrations/admin.py`, `apps/registrations/services.py`,
+  `apps/registrations/tests.py`, `README.md`, `planning.txt`.
+- Checks: all 76 tests across `apps.registrations` and `apps.payments` passed
+  on SQLite; Django system check and migration drift check passed;
+  `git diff --check` passed; Pylance reported no syntax errors in the changed
+  Python files.
+
+[2026-11-03] Organize Admin Panel 2 and add developer support
+- Added purpose descriptions to the Admin Panel 2 record directory and grouped
+  management navigation by section; added a protected Support page.
+- Added editable developer support contact settings for name, role, email,
+  phone, WhatsApp/profile links, and support notes. The migration seeds a blank
+  record so a site administrator can configure real details without guessed
+  personal information.
+- Updated the dashboard guide and added coverage for viewing and saving support
+  details through Admin Panel 2.
+- Files: `apps/contact/models.py`, `apps/contact/admin.py`,
+  `apps/contact/migrations/0002_developer_support_contact.py`,
+  `apps/dashboard/services.py`, `apps/dashboard/views.py`,
+  `apps/dashboard/urls.py`, `apps/dashboard/tests.py`,
+  `apps/dashboard/static/dashboard/css/dashboard.css`,
+  `templates/dashboard/base.html`, `templates/dashboard/records_index.html`,
+  `templates/dashboard/support.html`, `README.md`, `planning.txt`.
+- Checks: all 50 tests across `apps.dashboard` and `apps.contact` passed on
+  SQLite; Django system check passed; migration drift check reported no
+  changes; `git diff --check` passed.
+
+[2026-11-03] Consolidate registration emails and improve status tracking
+- Combined confirmed registration details and the category-styled digital pass
+  into one email with inline YSSE and anniversary logos; removed separately
+  queued ticket emails from staff and provider confirmation workflows.
+- Added organizer-editable confirmation/rejection email subjects and messages,
+  with validated placeholders and a migration that seeds default templates.
+- Updated registration tracking to accept the registration ID and either the
+  submitted email or phone number.
+- Updated registration email/tracking documentation and regression coverage.
+- Files: `apps/registrations/models.py`, `apps/registrations/admin.py`,
+  `apps/registrations/services.py`, `apps/registrations/views.py`,
+  `apps/registrations/tracking_forms.py`,
+  `apps/registrations/migrations/0010_registration_decision_emails.py`,
+  `apps/registrations/templates/registrations/emails/notification.html`,
+  `apps/registrations/templates/registrations/track.html`,
+  `apps/registrations/tests.py`, `apps/payments/services.py`,
+  `apps/payments/tests.py`, `apps/dashboard/services.py`, `README.md`,
+  `planning.txt`.
+- Checks: all 132 tests across `apps.dashboard`, `apps.contact`,
+  `apps.registrations`, and `apps.payments` passed on SQLite; Django system
+  check and migration drift check passed; `git diff --check` and Python
+  compilation passed.
+
+[2026-11-03] Refresh Admin Panel 2 navigation and seed developer support
+- Restyled the sidebar with clearer sections, icons, active states, and subtle
+  motion; improved the mobile navigation drawer, keyboard close behavior, and
+  reduced-motion support.
+- Seeded the Support page with the supplied developer name, role, Facebook,
+  WhatsApp, and phone details. The data migration fills only blank fields, so
+  existing administrator-configured values remain unchanged.
+- Updated the support page labels, README, and regression tests.
+- Files: `templates/dashboard/base.html`, `templates/dashboard/support.html`,
+  `apps/dashboard/static/dashboard/css/dashboard.css`,
+  `apps/dashboard/static/dashboard/js/dashboard.js`, `apps/dashboard/tests.py`,
+  `apps/contact/migrations/0003_seed_developer_support_contact.py`,
+  `README.md`, `planning.txt`.
+- Checks: all 51 tests across `apps.dashboard` and `apps.contact` passed on
+  SQLite; Django system check and migration drift check passed; migration
+  `contact.0003_seed_developer_support_contact` applied and seeded the
+  configured database; `git diff --check` passed.
+
+[2026-11-03] Enable moderator support editing and add developer email
+- Added `contact.change_developersupportsettings` to the baseline moderator
+  setup so authorized Admin Panel 2 moderators can open and save Support
+  details; added a regression test covering the edit flow.
+- Seeded `mdimtiazsarderjoy@gmail.com` only when the configured developer
+  email is blank, preserving previously configured addresses.
+- Updated README setup guidance and applied the new migration and moderator
+  group permission to the configured database.
+- Files: `apps/dashboard/management/commands/setup_summit_moderators.py`,
+  `apps/dashboard/tests.py`,
+  `apps/contact/migrations/0004_seed_developer_support_email.py`,
+  `README.md`, `planning.txt`.
+- Checks: all 52 tests across `apps.dashboard` and `apps.contact` passed on
+  SQLite; Django system check, migration drift check, and `git diff --check`
+  passed; verified the configured email and moderator change permission.
+
+[2026-11-03] Make support contacts code-owned and redesign Support page
+- Moved the developer name, role, email, phone, WhatsApp, and Facebook
+  details into `apps/dashboard/support.py`; removed Support editing from the
+  Django Admin and Admin Panel 2 records directory.
+- Removed the obsolete `DeveloperSupportSettings` model/table with a
+  forward migration so contact details are no longer persisted in the
+  database.
+- Redesigned the Support page with responsive contact cards, inline channel
+  icons, accessible links, and reduced-motion-aware decorative animation.
+- Updated README guidance and regression tests for fixed contacts and
+  inaccessible legacy edit routes.
+- Files: `apps/dashboard/support.py`, `apps/dashboard/views.py`,
+  `apps/dashboard/static/dashboard/css/dashboard.css`,
+  `apps/dashboard/management/commands/setup_summit_moderators.py`,
+  `apps/dashboard/services.py`, `apps/dashboard/tests.py`,
+  `apps/contact/admin.py`, `apps/contact/models.py`,
+  `apps/contact/migrations/0005_remove_developersupportsettings.py`,
+  `templates/dashboard/support.html`, `README.md`, `planning.txt`.
+- Checks: all 51 tests across `apps.dashboard` and `apps.contact` passed on
+  SQLite; Django system check and migration drift check passed; migration
+  `contact.0005_remove_developersupportsettings` applied and verified;
+  `git diff --check` passed. Browser preview was unavailable because the
+  local development server was not running.

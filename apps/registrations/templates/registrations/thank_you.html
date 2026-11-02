@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Thank You | YSSE Summit 2027{% endblock %}
+{% block styles %}<link rel="stylesheet" href="{% static 'registrations/css/registrations.css' %}">{% endblock %}
+
+{% block content %}
+  <section class="registration-section">
+    <div class="registration-shell registration-result">
+      <p class="registration-kicker">Submission received</p>
+      <h1>Thank you, {{ registration.full_name }}.</h1>
+      <p>Your registration ID is <strong>{{ registration.reference }}</strong>. Keep it safe so you can track your registration.</p>
+      <dl class="registration-summary">
+        <div><dt>Pass</dt><dd>{{ registration.pass_name_snapshot }}</dd></div>
+        <div><dt>Email</dt><dd>{{ registration.contact_email }}</dd></div>
+        {% if registration.phone_number %}
+          <div><dt>Phone</dt><dd>{{ registration.phone_number }}</dd></div>
+        {% endif %}
+        <div><dt>Amount</dt><dd>৳ {{ registration.amount_due|floatformat:2 }}</dd></div>
+        {% if registration.payment_submitted_at %}
+          <div><dt>Payment service</dt><dd>{{ registration.get_manual_payment_method_display }}</dd></div>
+          <div><dt>Transaction ID</dt><dd>{{ registration.payment_transaction_id }}</dd></div>
+          <div><dt>Payment screenshot</dt><dd>Received</dd></div>
+        {% endif %}
+      </dl>
+      <p>A formatted email summary of your submitted details has been sent to <strong>{{ registration.contact_email }}</strong>.</p>
+      {% if registration.amount_due > 0 %}
+        <p>Your {{ registration.get_manual_payment_method_display }} transaction ID and payment screenshot have been received. Your payment is pending verification; we will email you when your registration is accepted.</p>
+      {% else %}
+        <p>Your registration has been received. We will email you if its status changes.</p>
+      {% endif %}
+      <a class="registration-button" href="{% url 'registrations:track' %}">Track registration status</a>
+    </div>
+  </section>
+{% endblock %}

@@ -104,6 +104,11 @@ def create_checkout(*, registration, method):
         Registration.PaymentStatus.CANCELLED,
     ):
         raise PaymentIntegrationError("registration_not_payable")
+    if (
+        registration.payment_status == Registration.PaymentStatus.PENDING
+        and registration.payment_submitted_at
+    ):
+        raise PaymentIntegrationError("manual_payment_awaiting_review")
     if registration.amount_due <= Decimal("0.00"):
         raise PaymentIntegrationError("payment_not_required")
 
@@ -138,6 +143,11 @@ def create_checkout(*, registration, method):
                 Registration.PaymentStatus.PENDING,
                 Registration.PaymentStatus.FAILED,
                 Registration.PaymentStatus.CANCELLED,
+            )
+            or (
+                locked_registration.payment_status
+                == Registration.PaymentStatus.PENDING
+                and locked_registration.payment_submitted_at
             )
             or locked_registration.amount_due <= Decimal("0.00")
         ):
@@ -539,11 +549,18 @@ def _apply_verified_result(*, payment, result, payload_digest):
                     registration.ticket_reference or uuid.uuid4()
                 )
                 notify = "confirmation"
-            elif registration.status == Registration.Status.CANCELLED:
-                locked.diagnostic_code = "paid_after_registration_cancelled"
+            elif registration.status in (
+                Registration.Status.CANCELLED,
+                Registration.Status.REJECTED,
+            ):
+                locked.diagnostic_code = (
+                    "paid_after_registration_rejected"
+                    if registration.status == Registration.Status.REJECTED
+                    else "paid_after_registration_cancelled"
+                )
                 PaymentEvent.objects.create(
                     transaction=locked,
-                    event_type="paid_after_registration_cancelled",
+                    event_type=locked.diagnostic_code,
                     source="system",
                     diagnostic_code=locked.diagnostic_code,
                 )
@@ -580,10 +597,6 @@ def _apply_verified_result(*, payment, result, payload_digest):
                     registration.pk,
                     "confirmation",
                 ),
-                robust=True,
-            )
-            transaction.on_commit(
-                lambda: send_registration_notification(registration.pk, "ticket"),
                 robust=True,
             )
     return locked

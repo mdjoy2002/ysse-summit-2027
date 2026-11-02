@@ -23,6 +23,13 @@ if len(SECRET_KEY) < 50 or SECRET_KEY == "django-insecure-local-development-only
 if not ALLOWED_HOSTS:
     raise ImproperlyConfigured("Set ALLOWED_HOSTS in the production environment.")
 
+EMAIL_BACKEND = env(
+    "EMAIL_BACKEND",
+    default="django.core.mail.backends.smtp.EmailBackend",
+)
+if EMAIL_BACKEND == "django.core.mail.backends.console.EmailBackend":
+    EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+
 SECURE_SSL_REDIRECT = env.bool("SECURE_SSL_REDIRECT", default=True)
 SECURE_HSTS_SECONDS = env.int("SECURE_HSTS_SECONDS", default=31_536_000)
 SECURE_HSTS_INCLUDE_SUBDOMAINS = env.bool(

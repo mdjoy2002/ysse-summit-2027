@@ -13,15 +13,32 @@
         <span class="dashboard-brand-mark" aria-hidden="true">Y</span>
         <span><strong>YSSE Summit</strong><small>Management</small></span>
       </a>
-      <nav class="dashboard-nav">
+      <nav class="dashboard-nav" aria-label="Admin Panel 2 navigation">
         <p class="dashboard-nav-label">Workspace</p>
-        <a href="{% url 'dashboard:overview' %}" {% if request.resolver_match.url_name == "overview" %}aria-current="page"{% endif %}>Overview</a>
-        <a href="{% url 'dashboard:records_index' %}" {% if request.resolver_match.url_name == "records_index" or request.resolver_match.url_name == "records_list" %}aria-current="page"{% endif %}>All records</a>
-        <a href="{% url 'dashboard:reports' %}" {% if request.resolver_match.url_name == "reports" %}aria-current="page"{% endif %}>Reports</a>
-        <p class="dashboard-nav-label">Management</p>
+        <a href="{% url 'dashboard:overview' %}" {% if request.resolver_match.url_name == "overview" %}aria-current="page"{% endif %}>
+          <span class="dashboard-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></svg></span>
+          <span>Overview</span>
+        </a>
+        <a href="{% url 'dashboard:records_index' %}" {% if request.resolver_match.url_name == "records_index" or request.resolver_match.url_name == "records_list" %}aria-current="page"{% endif %}>
+          <span class="dashboard-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="6" rx="1"/><rect x="3" y="14" width="18" height="6" rx="1"/><path d="M7 7h.01M7 17h.01"/></svg></span>
+          <span>Records directory</span>
+        </a>
+        <a href="{% url 'dashboard:reports' %}" {% if request.resolver_match.url_name == "reports" %}aria-current="page"{% endif %}>
+          <span class="dashboard-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 19V5m0 14h17"/><path d="m7 15 4-4 3 2 6-7"/><path d="M16 6h4v4"/></svg></span>
+          <span>Reports &amp; insights</span>
+        </a>
+        <p class="dashboard-nav-label">Help &amp; support</p>
+        <a href="{% url 'dashboard:support' %}" {% if request.resolver_match.url_name == "support" %}aria-current="page"{% endif %}>
+          <span class="dashboard-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.6 9a2.5 2.5 0 1 1 4.7 1.2c-.8 1.2-2.3 1.3-2.3 3"/><path d="M12 17h.01"/></svg></span>
+          <span>Developer support</span>
+        </a>
+        {% if shortcuts %}<p class="dashboard-nav-label">Management</p>{% endif %}
         {% for shortcut in shortcuts %}
-          {% if request.user.is_superuser %}{% ifchanged shortcut.description %}<p class="dashboard-nav-label">{{ shortcut.description }}</p>{% endifchanged %}{% endif %}
-          <a href="{{ shortcut.url }}" {% if request.path == shortcut.url %}aria-current="page"{% endif %}>{{ shortcut.label }}</a>
+          {% if request.user.is_superuser %}{% ifchanged shortcut.section %}<p class="dashboard-nav-label">{{ shortcut.section }}</p>{% endifchanged %}{% endif %}
+          <a href="{{ shortcut.url }}" {% if request.path == shortcut.url %}aria-current="page"{% endif %}>
+            <span class="dashboard-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z"/><path d="M8 9h8M8 13h5"/></svg></span>
+            <span>{{ shortcut.label }}</span>
+          </a>
         {% endfor %}
       </nav>
       <div class="dashboard-sidebar-note">
@@ -29,6 +46,7 @@
         <span>Access is permission controlled</span>
       </div>
     </aside>
+    <button class="dashboard-nav-backdrop" type="button" aria-label="Close navigation menu" tabindex="-1"></button>
 
     <div class="dashboard-main">
       <header class="dashboard-topbar">
@@ -56,7 +74,7 @@
       </section>
       <footer class="dashboard-footer">
         <span>YSSE Summit 2027 · Staff workspace</span>
-        <a href="{% url 'dashboard:records_index' %}">All records</a>
+        <span><a href="{% url 'dashboard:support' %}">Support</a> · <a href="{% url 'dashboard:records_index' %}">All records</a></span>
       </footer>
     </div>
   </div>

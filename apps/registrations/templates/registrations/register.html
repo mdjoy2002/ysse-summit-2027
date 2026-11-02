@@ -9,7 +9,7 @@
     <div class="registration-shell registration-form-shell">
       <p class="registration-kicker">Participant registration</p>
       <h1>Reserve your summit pass.</h1>
-      <p>No account or sign-in is required. Enter an email address for registration updates; phone is optional. Keep this browser session open to review your registration and continue to payment.</p>
+      <p>No account or sign-in is required. Enter an email address for registration updates; phone is optional. For paid passes, your registration is created after you submit a payment method.</p>
       <form method="post" class="registration-form">
         {% csrf_token %}
         {% if form.non_field_errors %}<div class="form-errors" role="alert">{{ form.non_field_errors }}</div>{% endif %}
@@ -24,7 +24,7 @@
             {% for error in field.errors %}<p class="field-error">{{ error }}</p>{% endfor %}
           </div>
         {% endfor %}
-        <button class="registration-button" type="submit">Submit registration <span aria-hidden="true">↗</span></button>
+        <button class="registration-button" type="submit">Continue <span aria-hidden="true">↗</span></button>
       </form>
       <p class="registration-privacy">By submitting, you consent to the summit team using the details above for registration administration and event communication.</p>
     </div>
